@@ -12,20 +12,14 @@ class MainController:
         # Instanciar o Model e a View
         self.main_model = MainModel()
         self.main_view = MainView()
-        self.second_view = SecondView() 
-        self.table_view = TableView()
 
         self.setup_connections()
-        self.setup_connections2()
-
         self.main_view.show()
 
     def setup_connections(self):
         self.main_view.add_button.clicked.connect(self.add_name)
         self.main_view.clear_button.clicked.connect(self.clear_name)
 
-    def setup_connections2(self):
-        self.main_view.open_second_view_button.clicked.connect(self.open_second_view)
 
     def add_name(self):
         name = self.main_view.input_field.text()
@@ -38,13 +32,6 @@ class MainController:
         self.main_view.update_label("Nenhum nome definido.")
 
 
-    def open_second_view(self):
-        self.table_view.show()
-        #self.second_view.show()
-
-        # data_from_first_view = self.main_model.nome
-
-        # self.second_view.label.setText(f"Data from MainView: {data_from_first_view}")
 
 
 
