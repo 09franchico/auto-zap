@@ -10,7 +10,8 @@ from PySide6.QtWidgets import (
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
-    QComboBox
+    QComboBox,
+    QStyle
 )
 from PySide6.QtCore import Qt
 import qdarktheme
@@ -29,22 +30,22 @@ class MainView(QMainWindow):
         #----------------------------
         # Widgets
         self.input_field = QLineEdit()
-        self.add_button = QPushButton("Adicionar Nome")
+        self.add_button = QPushButton("Iniciar processo")
         self.add_button.setProperty('class','success')
-        self.clear_button = QPushButton("Limpar Nome")
+        self.clear_button = QPushButton("Parar processo")
         self.clear_button.setProperty('class','danger')
         self.combo_box = QComboBox()
 
 
         #----------------------------
         # Criar tabela
-        self.table_widget = QTableWidget(3, 3, self) 
-        self.table_widget.setHorizontalHeaderLabels(["Column 1", "Column 2", "Column 3"])
-        self.table_widget.setItem(0, 0, QTableWidgetItem("Row 1, Column 1"))
-        self.table_widget.setItem(0, 1, QTableWidgetItem("Row 1, Column 2"))
-        self.table_widget.setItem(0, 2, QTableWidgetItem("Row 1, Column 3"))
-        self.table_widget.setItem(1, 0, QTableWidgetItem("Row 2, Column 1"))
-        self.table_widget.setItem(2, 0, QTableWidgetItem("Row 3, Column 1"))
+        self.table_widget = QTableWidget(15, 4, self) 
+        self.table_widget.setHorizontalHeaderLabels(["Nome", "Email", "Telefone","Mensagem"])
+        # self.table_widget.setItem(0, 0, QTableWidgetItem("Row 1, Column 1"))
+        # self.table_widget.setItem(0, 1, QTableWidgetItem("Row 1, Column 2"))
+        # self.table_widget.setItem(0, 2, QTableWidgetItem("Row 1, Column 3"))
+        # self.table_widget.setItem(1, 0, QTableWidgetItem("Row 2, Column 1"))
+        # self.table_widget.setItem(2, 0, QTableWidgetItem("Row 3, Column 1"))
 
         self.table_widget.setColumnWidth(0, 200)
         self.table_widget.setColumnWidth(1, 230)
@@ -65,7 +66,7 @@ class MainView(QMainWindow):
 
 
         tree_widget = QTreeWidget()
-        tree_widget.setHeaderLabels(["Menus - BOT"])
+        tree_widget.setHeaderLabels(["Automção"])
         self.populate_tree(tree_widget)
 
         dock1 = QDockWidget("Menus", self)
@@ -73,9 +74,14 @@ class MainView(QMainWindow):
         dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
         self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
 
+        dock2 = QDockWidget("Logs", self)
+        dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
+        dock2.setFixedHeight(100) 
+        self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
+
 
         stastus_bar = self.statusBar()
-        stastus_bar.showMessage("")
+        stastus_bar.showMessage("-------------")
 
         self.setCentralWidget(self.central_widget)
         self.setFixedSize(self.width(),self.height())
@@ -85,17 +91,35 @@ class MainView(QMainWindow):
 
 
     def populate_tree(self, tree_widget):
+        save_pixmap = QStyle.StandardPixmap.SP_TitleBarMenuButton
+        save_icon = self.style().standardIcon(save_pixmap)
+
+        #----------------------------------
         parent_item = QTreeWidgetItem(tree_widget, ["Msg Telegram"])
-        QTreeWidgetItem(parent_item, ["Filho 1.1"])
+        parent_item.setIcon(0, save_icon)
+
+        child1 = QTreeWidgetItem(parent_item, ["Filho 1.1"])
+        QTreeWidgetItem(child1, ["Neto 1.1.1"])
+        QTreeWidgetItem(child1, ["Neto 1.1.2"])
+
         QTreeWidgetItem(parent_item, ["Filho 1.2"])
+        QTreeWidgetItem(parent_item, ["Filho 1.3"])
+        QTreeWidgetItem(parent_item, ["Filho 1.4"])
+
+        #----------------------------------
         parent_item2 = QTreeWidgetItem(tree_widget, ["Msg Whats"])
+        parent_item2.setIcon(0, save_icon)
         QTreeWidgetItem(parent_item2, ["Filho 2.1"])
         QTreeWidgetItem(parent_item2, ["Filho 2.2"])
+        QTreeWidgetItem(parent_item2, ["Filho 2.3"])
+        QTreeWidgetItem(parent_item2, ["Filho 2.4"])
+        QTreeWidgetItem(parent_item2, ["Filho 2.5"])
 
+       #----------------------------------
         parent_item3 = QTreeWidgetItem(tree_widget, ["Outros"])
+        parent_item3.setIcon(0, save_icon)
         QTreeWidgetItem(parent_item3, ["Filho 3.1"])
         QTreeWidgetItem(parent_item3, ["Filho 3.2"])
-
 
         tree_widget.expandAll()
 

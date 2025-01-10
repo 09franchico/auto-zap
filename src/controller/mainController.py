@@ -15,10 +15,10 @@ class MainController:
         self.main_view = MainView()
         self.theme = SetupTheme()
         self.theme.setupTheme('dark')
-
         self.theme_select()
-        self.setup_connections()
 
+        #-------------------------
+        self.setup_connections()
         self.main_view.show()
 
 

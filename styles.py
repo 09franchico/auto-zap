@@ -29,4 +29,5 @@ class SetupTheme:
     def getTheme(self):
         return qdarktheme.get_themes()
     
+    
 
