@@ -14,7 +14,6 @@ from PySide6.QtWidgets import (
     QStyle
 )
 from PySide6.QtCore import Qt
-import qdarktheme
 
 
 class MainView(QMainWindow):
@@ -49,7 +48,8 @@ class MainView(QMainWindow):
 
         self.table_widget.setColumnWidth(0, 200)
         self.table_widget.setColumnWidth(1, 230)
-        self.table_widget.setColumnWidth(2, 300) 
+        self.table_widget.setColumnWidth(2, 200) 
+        self.table_widget.setColumnWidth(3, 300) 
 
 
         self.label = QLabel("Nenhum nome definido.")
@@ -84,7 +84,7 @@ class MainView(QMainWindow):
         stastus_bar.showMessage("-------------")
 
         self.setCentralWidget(self.central_widget)
-        self.setFixedSize(self.width(),self.height())
+        # self.setFixedSize(self.width(),self.height())
 
     def update_label(self, text):
         self.label.setText(text)
