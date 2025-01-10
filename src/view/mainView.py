@@ -1,19 +1,19 @@
 from PySide6.QtWidgets import (
     QMainWindow, 
-    QTextEdit, 
     QDockWidget, 
     QLabel,
-    QWidget, 
-    QVBoxLayout, 
+    QWidget,  
     QGridLayout,
     QTreeWidget, 
     QTreeWidgetItem,
     QLineEdit,
     QPushButton,
     QTableWidget,
-    QTableWidgetItem
+    QTableWidgetItem,
+    QComboBox
 )
 from PySide6.QtCore import Qt
+import qdarktheme
 
 
 class MainView(QMainWindow):
@@ -33,6 +33,7 @@ class MainView(QMainWindow):
         self.add_button.setProperty('class','success')
         self.clear_button = QPushButton("Limpar Nome")
         self.clear_button.setProperty('class','danger')
+        self.combo_box = QComboBox()
 
 
         #----------------------------
@@ -58,6 +59,7 @@ class MainView(QMainWindow):
         self.layout_grid.addWidget(self.input_field,1,1)
         self.layout_grid.addWidget(self.add_button,1,2)
         self.layout_grid.addWidget(self.clear_button,2,2,Qt.AlignmentFlag.AlignTop)
+        self.layout_grid.addWidget(self.combo_box,2,2,Qt.AlignmentFlag.AlignBottom)
         self.layout_grid.addWidget(self.table_widget,2,1)
         self.layout_grid.addWidget(self.label,3,1)
 
@@ -76,6 +78,7 @@ class MainView(QMainWindow):
         stastus_bar.showMessage("")
 
         self.setCentralWidget(self.central_widget)
+        self.setFixedSize(self.width(),self.height())
 
     def update_label(self, text):
         self.label.setText(text)

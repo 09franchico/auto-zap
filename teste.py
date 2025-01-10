@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QTreeView, QFileSystemModel
 from PySide6.QtCore import QDir
+from qt_material import apply_stylesheet
 
 class MainView(QMainWindow):
     def __init__(self):
@@ -22,6 +23,7 @@ class MainView(QMainWindow):
         self.setCentralWidget(tree_view)
 
 app = QApplication([])
+apply_stylesheet(app, theme="dark_blue.xml",css_file='custom.css')
 window = MainView()
 window.show()
 app.exec()
