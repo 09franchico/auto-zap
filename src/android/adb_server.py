@@ -7,7 +7,7 @@ class StartDaemon:
         try:
             # Inicia o servidor ADB
             process = subprocess.run(
-                ['platform-tools/adb.exe', 'start-server'],
+                ['platform-tools_r34.0.5-windows/adb.exe', 'start-server'],
                 capture_output=True, text=True
             )
             if process.returncode == 0:

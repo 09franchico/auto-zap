@@ -42,12 +42,7 @@ class MainController:
 
         
     def start_process(self):
-        adb = AndroidDeviceManager()
-        adb.connect_device()
-        adb.mensagem_whats("92993160919","FRANCISCO")
 
-
-    def stop_process(self):
         selected_items = self.main_view.table_widget.selectedIndexes()
 
         if selected_items:
@@ -58,10 +53,17 @@ class MainController:
             # Verificar se o item existe
             if item:
                 print(f"Item selecionado: {item.text()}")
+                adb = AndroidDeviceManager()
+                adb.connect_device()
+                adb.mensagem_whats("92993160919",item.text())
             else:
                 print("Nenhum item selecionado ou item vazio.")
         else:
             print("Nenhum item selecionado.")
+
+
+    def stop_process(self):
+        pass
 
 
     def get_planilha(self,path):

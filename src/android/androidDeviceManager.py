@@ -259,7 +259,7 @@ class AndroidDeviceManager:
         
         # Digitar a mensagem
         self.device.shell(f'input text "{msg}"')
-        
+
 
         result = self.device.screencap()
         image = Image.open(io.BytesIO(result))
