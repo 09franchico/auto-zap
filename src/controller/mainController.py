@@ -31,20 +31,41 @@ class MainController:
     def setup_connections(self):
         self.main_view.start_process.clicked.connect(self.start_process)
         self.main_view.stop_process.clicked.connect(self.stop_process)
+        self.main_view.open_action.triggered.connect(self.open_action_file)
         self.main_view.combo_box.currentTextChanged.connect(self.theme.setupTheme)
 
+    def open_action_file(self):
+        file_path_xlsx = self.main_view.open_action_file()
 
+        if file_path_xlsx is not None:
+            data_plan = self.get_planilha(file_path_xlsx)
+            self.main_view.show_table_widget_view(data=data_plan)
+
+        
     def start_process(self):
-        data_plan = self.get_planilha()
-        self.main_view.show_table_widget_view(data=data_plan)
+        pass
 
 
     def stop_process(self):
-        self.main_view.table_widget.clearContents()
+        selected_items = self.main_view.table_widget.selectedIndexes()
 
-    def get_planilha(self):
+        if selected_items:
+            # Pegando o primeiro item selecionado
+            index = selected_items[0]
+            item = self.main_view.table_widget.item(index.row(), index.column())
+            
+            # Verificar se o item existe
+            if item:
+                print(f"Item selecionado: {item.text()}")
+            else:
+                print("Nenhum item selecionado ou item vazio.")
+        else:
+            print("Nenhum item selecionado.")
+
+
+    def get_planilha(self,path):
         try:
-            workbook = load_workbook('exemplo.xlsx')
+            workbook = load_workbook(path)
             sheet = workbook.active
             
             header_label = []
