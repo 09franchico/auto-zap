@@ -4,6 +4,31 @@ from styles import SetupTheme
 from openpyxl import Workbook
 from openpyxl import load_workbook
 from src.android.androidDeviceManager import AndroidDeviceManager
+from PySide6.QtCore import QThread, Signal
+
+
+
+class AdbThread(QThread):
+
+    finished = Signal()
+    error = Signal(str)
+
+    def __init__(self, adb_manager, phone_number, message, parent=None):
+        super().__init__(parent)
+        self.adb_manager = adb_manager
+        self.phone_number = phone_number
+        self.message = message
+
+    def run(self):
+        try:
+
+            self.adb_manager.connect_device()
+            self.adb_manager.habiliar_adbkeyboard()
+            self.adb_manager.mensagem_whats(self.phone_number, self.message)
+            self.finished.emit()
+
+        except Exception as e:
+            self.error.emit(str(e))
 
 
 
@@ -17,6 +42,8 @@ class MainController:
         self.theme = SetupTheme()
         self.theme.setupTheme('dark')
         self.theme_select()
+
+        self.adb = None
 
         #-------------------------
         self.setup_connections()
@@ -42,30 +69,38 @@ class MainController:
 
         
     def start_process(self):
-
         selected_items = self.main_view.table_widget.selectedIndexes()
 
         if selected_items:
-            # Pegando o primeiro item selecionado
             index = selected_items[0]
             item = self.main_view.table_widget.item(index.row(), index.column())
-            
-            # Verificar se o item existe
+
             if item:
                 print(f"Item selecionado: {item.text()}")
-                adb = AndroidDeviceManager()
-                adb.connect_device()
-                adb.mensagem_whats("92993160919",item.text())
+                self.adb = AndroidDeviceManager()
+                self.adb_thread = AdbThread(self.adb, "92993160919", item.text())
+                
+                self.adb_thread.finished.connect(self.on_adb_finished)
+                self.adb_thread.error.connect(self.on_adb_error)
+                self.adb_thread.start()
+
             else:
                 print("Nenhum item selecionado ou item vazio.")
         else:
             print("Nenhum item selecionado.")
 
 
+    def on_adb_finished(self):
+       print("Comando ADB concluído com sucesso!")
+
+    def on_adb_error(self, error_message):
+      print(f"Erro ao executar o comando ADB: {error_message}")
+
+
     def stop_process(self):
-        pass
+        self.adb.reset_adbkeyboard()
 
-
+        
     def get_planilha(self,path):
         try:
             workbook = load_workbook(path)

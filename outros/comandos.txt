@@ -1,0 +1,8 @@
+adb install ADBKeyboard.apk 
+adb shell ime enable com.android.adbkeyboard/.AdbIME
+adb shell ime set com.android.adbkeyboard/.AdbIME 
+
+
+
+#reset
+adb shell ime reset

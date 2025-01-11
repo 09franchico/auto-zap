@@ -241,6 +241,22 @@ class AndroidDeviceManager:
 
         print("Teste PS-2.5.3 concluído.")
 
+    def habiliar_adbkeyboard(self):
+
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        self.device.shell(f'ime enable com.android.adbkeyboard/.AdbIME')
+        time.sleep(2)
+        self.device.shell(f'ime set com.android.adbkeyboard/.AdbIME')
+
+    def reset_adbkeyboard(self):
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        
+        self.device.shell(f'ime reset')
+
 
     def mensagem_whats(self,numero, msg):
 
@@ -258,7 +274,8 @@ class AndroidDeviceManager:
         time.sleep(2)
         
         # Digitar a mensagem
-        self.device.shell(f'input text "{msg}"')
+        # self.device.shell(f'input text "{msg}"')
+        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{msg}"')
 
 
         result = self.device.screencap()
