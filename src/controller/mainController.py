@@ -36,17 +36,11 @@ class MainController:
 
     def start_process(self):
         data_plan = self.get_planilha()
-
         self.main_view.show_table_widget_view(data=data_plan)
 
 
-        # self.main_view.add_row_and_lines_table()
-
-
-       
-
     def stop_process(self):
-        pass
+        self.main_view.table_widget.clearContents()
 
     def get_planilha(self):
         try:

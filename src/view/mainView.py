@@ -34,16 +34,9 @@ class MainView(QMainWindow):
         self.combo_box = QComboBox()
 
 
-        #----------------------------
-        # Criar tabela
-        # self.table_widget = QTableWidget(20, 4, self) 
-        # self.table_widget.setHorizontalHeaderLabels(["", "", "",""])
-        
-
-        # self.table_widget.setColumnWidth(0, 200)
-        # self.table_widget.setColumnWidth(1, 230)
-        # self.table_widget.setColumnWidth(2, 200) 
-        # self.table_widget.setColumnWidth(3, 300) 
+        #---------------------------- 
+        self.table_widget = QTableWidget(0, 0, self)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 2, 1)
 
         #----------------------------
         # Adicionar widgets ao layout
@@ -74,7 +67,7 @@ class MainView(QMainWindow):
         stastus_bar.showMessage("Bot")
 
         self.setCentralWidget(self.central_widget)
-        # self.setFixedSize(self.width(),self.height())
+        #self.setFixedSize(self.width(),self.height())
 
     def update_label(self, text):
         self.label.setText(text)
@@ -127,7 +120,7 @@ class MainView(QMainWindow):
         QTreeWidgetItem(parent_item2, ["Filho 2.5"])
 
        #----------------------------------
-        parent_item3 = QTreeWidgetItem(tree_widget, ["Outros"])
+        parent_item3 = QTreeWidgetItem(tree_widget, ["WEB"])
         parent_item3.setIcon(0, save_icon)
         QTreeWidgetItem(parent_item3, ["Filho 3.1"])
         QTreeWidgetItem(parent_item3, ["Filho 3.2"])
