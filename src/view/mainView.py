@@ -11,7 +11,8 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QComboBox,
-    QStyle
+    QStyle,
+    QTextEdit
 )
 from PySide6.QtCore import Qt
 
@@ -20,7 +21,7 @@ class MainView(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sistema BOT")
-        self.setGeometry(400, 200, 1250, 600)
+        self.setGeometry(400, 200, 1250,700)
 
         #----------------------------
         self.central_widget = QWidget()
@@ -28,43 +29,29 @@ class MainView(QMainWindow):
 
         #----------------------------
         # Widgets
-        self.input_field = QLineEdit()
-        self.add_button = QPushButton("Iniciar processo")
-        self.add_button.setProperty('class','success')
-        self.clear_button = QPushButton("Parar processo")
-        self.clear_button.setProperty('class','danger')
+        self.start_process = QPushButton("Iniciar processo")
+        self.stop_process = QPushButton("Parar processo")
         self.combo_box = QComboBox()
 
 
         #----------------------------
         # Criar tabela
-        self.table_widget = QTableWidget(15, 4, self) 
-        self.table_widget.setHorizontalHeaderLabels(["Nome", "Email", "Telefone","Mensagem"])
-        # self.table_widget.setItem(0, 0, QTableWidgetItem("Row 1, Column 1"))
-        # self.table_widget.setItem(0, 1, QTableWidgetItem("Row 1, Column 2"))
-        # self.table_widget.setItem(0, 2, QTableWidgetItem("Row 1, Column 3"))
-        # self.table_widget.setItem(1, 0, QTableWidgetItem("Row 2, Column 1"))
-        # self.table_widget.setItem(2, 0, QTableWidgetItem("Row 3, Column 1"))
+        # self.table_widget = QTableWidget(20, 4, self) 
+        # self.table_widget.setHorizontalHeaderLabels(["", "", "",""])
+        
 
-        self.table_widget.setColumnWidth(0, 200)
-        self.table_widget.setColumnWidth(1, 230)
-        self.table_widget.setColumnWidth(2, 200) 
-        self.table_widget.setColumnWidth(3, 300) 
-
-
-        self.label = QLabel("Nenhum nome definido.")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # self.table_widget.setColumnWidth(0, 200)
+        # self.table_widget.setColumnWidth(1, 230)
+        # self.table_widget.setColumnWidth(2, 200) 
+        # self.table_widget.setColumnWidth(3, 300) 
 
         #----------------------------
         # Adicionar widgets ao layout
-        self.layout_grid.addWidget(self.input_field,1,1)
-        self.layout_grid.addWidget(self.add_button,1,2)
-        self.layout_grid.addWidget(self.clear_button,2,2,Qt.AlignmentFlag.AlignTop)
+        self.layout_grid.addWidget(self.start_process,1,2)
+        self.layout_grid.addWidget(self.stop_process,2,2,Qt.AlignmentFlag.AlignTop)
         self.layout_grid.addWidget(self.combo_box,2,2,Qt.AlignmentFlag.AlignBottom)
-        self.layout_grid.addWidget(self.table_widget,2,1)
-        self.layout_grid.addWidget(self.label,3,1)
 
-
+        #----------------------------
         tree_widget = QTreeWidget()
         tree_widget.setHeaderLabels(["Automção"])
         self.populate_tree(tree_widget)
@@ -74,20 +61,44 @@ class MainView(QMainWindow):
         dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
         self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
 
+        #----------------------------
+        self.text_edit = QTextEdit()
         dock2 = QDockWidget("Logs", self)
+        dock2.setWidget(self.text_edit)
         dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
         dock2.setFixedHeight(100) 
         self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
 
 
         stastus_bar = self.statusBar()
-        stastus_bar.showMessage("-------------")
+        stastus_bar.showMessage("Bot")
 
         self.setCentralWidget(self.central_widget)
         # self.setFixedSize(self.width(),self.height())
 
     def update_label(self, text):
         self.label.setText(text)
+
+
+    def show_table_widget_view(self, data: dict):
+        #---------------------------------
+        rows = len(data.get('data', []))
+        cols = len(data.get('header_label', []))
+        
+        self.table_widget = QTableWidget(rows, cols, self)
+        self.table_widget.setHorizontalHeaderLabels(data.get('header_label'))
+
+        for col_index in range(cols):
+            self.table_widget.setColumnWidth(col_index, 200)
+
+        #-----------------------------------
+        # Adicionando os dados dinamicamente
+        for row_index, row_data in enumerate(data.get('data', [])):
+            for col_index, cell_data in enumerate(row_data):
+                item = QTableWidgetItem(str(cell_data))
+                self.table_widget.setItem(row_index, col_index, item)
+        
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 2, 1)
 
 
     def populate_tree(self, tree_widget):
@@ -124,72 +135,3 @@ class MainView(QMainWindow):
         tree_widget.expandAll()
 
 
-
-
-
-
-
-
-
-
-
-
-    #-----------------------------------------------------------------
-
-    #     central_widget = QTextEdit()
-    #     central_widget.setPlaceholderText("Área de texto principal")
-    #     self.setCentralWidget(central_widget)
-    #     self.create_docks()
-
-
-    # def create_docks(self):
-
-    #     #-----------------------------------------------
-    #     dock1 = QDockWidget("Painel 1 - TreeView", self)
-    #     dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
-
-
-    #     tree_widget = QTreeWidget()
-    #     tree_widget.setHeaderLabels(["Nome"])
-    #     self.populate_tree(tree_widget)
-
-    #     dock1.setWidget(tree_widget)
-    #     self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
-
-
-    #     #-----------------------------------------------
-    #     dock2 = QDockWidget("Painel 2", self)
-    #     dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
-    #     dock2.setWidget(QLabel("Conteúdo do Painel 2"))
-    #     self.addDockWidget(Qt.RightDockWidgetArea, dock2)
-
-    #     #-----------------------------------------------
-    #     dock3 = QDockWidget("Painel 3", self)
-    #     dock3.setAllowedAreas(Qt.AllDockWidgetAreas)
-
-    #     custom_widget = QWidget()
-    #     layout = QVBoxLayout()
-    #     layout.addWidget(QLabel("Painel com layout personalizado"))
-    #     layout.addWidget(QTextEdit("Campo de texto no Painel 3"))
-    #     custom_widget.setLayout(layout)
-
-    #     dock3.setWidget(custom_widget)
-    #     self.addDockWidget(Qt.BottomDockWidgetArea, dock3)
-    #     dock3.setFloating(False)
-
-
-
-    # def populate_tree(self, tree_widget):
-    #     parent_item = QTreeWidgetItem(tree_widget, ["Item Pai 1"])
-    #     QTreeWidgetItem(parent_item, ["Filho 1.1"])
-    #     QTreeWidgetItem(parent_item, ["Filho 1.2"])
-    #     parent_item2 = QTreeWidgetItem(tree_widget, ["Item Pai 2"])
-    #     QTreeWidgetItem(parent_item2, ["Filho 2.1"])
-    #     QTreeWidgetItem(parent_item2, ["Filho 2.2"])
-
-    #     parent_item3 = QTreeWidgetItem(tree_widget, ["Item Pai 3"])
-    #     QTreeWidgetItem(parent_item3, ["Filho 3.1"])
-    #     QTreeWidgetItem(parent_item3, ["Filho 3.2"])
-
-
-    #     tree_widget.expandAll()

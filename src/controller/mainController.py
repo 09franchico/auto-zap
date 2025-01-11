@@ -3,6 +3,8 @@ from src.view.mainView import MainView
 from src.view.secondView import SecondView
 from src.view.tableView import TableView
 from styles import SetupTheme
+from openpyxl import Workbook
+from openpyxl import load_workbook
 
 
 
@@ -27,20 +29,63 @@ class MainController:
 
 
     def setup_connections(self):
-        self.main_view.add_button.clicked.connect(self.add_name)
-        self.main_view.clear_button.clicked.connect(self.clear_name)
+        self.main_view.start_process.clicked.connect(self.start_process)
+        self.main_view.stop_process.clicked.connect(self.stop_process)
         self.main_view.combo_box.currentTextChanged.connect(self.theme.setupTheme)
 
 
-    def add_name(self):
-        name = self.main_view.input_field.text()
-        if name:
-            self.main_model.addNome(name)
-            self.main_view.update_label(name)
+    def start_process(self):
+        data_plan = self.get_planilha()
 
-    def clear_name(self):
-        self.main_model.removeNome()
-        self.main_view.update_label("Nenhum nome definido.")
+        self.main_view.show_table_widget_view(data=data_plan)
+
+
+        # self.main_view.add_row_and_lines_table()
+
+
+       
+
+    def stop_process(self):
+        pass
+
+    def get_planilha(self):
+        try:
+            workbook = load_workbook('exemplo.xlsx')
+            sheet = workbook.active
+            
+            header_label = []
+            data = []
+
+            for i, row in enumerate(sheet.iter_rows(values_only=True)):
+                if i == 0: 
+                    header_label = [cell if cell is not None else '' for cell in row]
+                else: 
+                    data.append([cell if cell is not None else '' for cell in row])
+            
+            result = {
+                "header_label": header_label,
+                "data": data
+            }
+            
+            return result
+        
+        except Exception as e:
+            print(f"Erro ao processar o arquivo: {e}")
+            return None
+        
+
+    def create_planilha(self):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Minha Planilha"
+
+        ws.append(["NOME", "EMAIL", "TELEFONE","MENSAGEM"])
+        ws.append([f"Francisco santos", "fra@gmail.com", "92993160919","OLA AQUI È UM TESTE DE MENSAGEM QUE SERÀ ENVIADO"])
+
+        # Salvar a planilha
+        wb.save("exemplo.xlsx")
+
+
 
 
 
