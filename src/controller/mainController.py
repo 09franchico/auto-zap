@@ -1,10 +1,9 @@
 from  src.model.mainModel import MainModel
 from src.view.mainView import MainView
-from src.view.secondView import SecondView
-from src.view.tableView import TableView
 from styles import SetupTheme
 from openpyxl import Workbook
 from openpyxl import load_workbook
+from src.android.androidDeviceManager import AndroidDeviceManager
 
 
 
@@ -43,7 +42,9 @@ class MainController:
 
         
     def start_process(self):
-        pass
+        adb = AndroidDeviceManager()
+        adb.connect_device()
+        adb.mensagem_whats("92993160919","FRANCISCO")
 
 
     def stop_process(self):

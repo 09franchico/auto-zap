@@ -1,5 +1,6 @@
 import qdarktheme
 
+#pyinstaller --onefile --noconsole main.py 
 
 qss = """
 QPushButton {
