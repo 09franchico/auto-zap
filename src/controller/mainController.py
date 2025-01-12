@@ -10,13 +10,13 @@ from PySide6.QtCore import QThread, Signal
 
 class AdbThread(QThread):
 
-    finished = Signal()
+    finished = Signal(str)
     error = Signal(str)
 
-    def __init__(self, adb_manager, phone_number, message, parent=None):
+    def __init__(self, adb_manager:AndroidDeviceManager, phones_number:list, message, parent=None):
         super().__init__(parent)
         self.adb_manager = adb_manager
-        self.phone_number = phone_number
+        self.phones_number:list = phones_number
         self.message = message
 
     def run(self):
@@ -24,8 +24,14 @@ class AdbThread(QThread):
 
             self.adb_manager.connect_device()
             self.adb_manager.habiliar_adbkeyboard()
-            self.adb_manager.mensagem_whats(self.phone_number, self.message)
-            self.finished.emit()
+            for phone in self.phones_number:
+                status, msg = self.adb_manager.mensagem_whats(phone, self.message)
+                if status:
+                   self.finished.emit(f"[{phone}] : {self.message}")
+                else:
+                   self.error.emit(msg)
+                   break
+
 
         except Exception as e:
             self.error.emit(str(e))
@@ -42,7 +48,7 @@ class MainController:
         self.theme = SetupTheme()
         self.theme.setupTheme('dark')
         self.theme_select()
-
+        self.data_plan = None
         self.adb = None
 
         #-------------------------
@@ -64,8 +70,8 @@ class MainController:
         file_path_xlsx = self.main_view.open_action_file()
 
         if file_path_xlsx is not None:
-            data_plan = self.get_planilha(file_path_xlsx)
-            self.main_view.show_table_widget_view(data=data_plan)
+            self.data_plan = self.get_planilha(file_path_xlsx)
+            self.main_view.show_table_widget_view(data=self.data_plan)
 
         
     def start_process(self):
@@ -76,29 +82,34 @@ class MainController:
             item = self.main_view.table_widget.item(index.row(), index.column())
 
             if item:
-                print(f"Item selecionado: {item.text()}")
+                self.log(f"Item selecionado :: {item.text()}")
+                telefones = self.main_view.get_column_data("TELEFONE")
+
                 self.adb = AndroidDeviceManager()
-                self.adb_thread = AdbThread(self.adb, "92993160919", item.text())
-                
+                self.adb_thread = AdbThread(self.adb, telefones, item.text())
                 self.adb_thread.finished.connect(self.on_adb_finished)
                 self.adb_thread.error.connect(self.on_adb_error)
                 self.adb_thread.start()
 
             else:
-                print("Nenhum item selecionado ou item vazio.")
+                self.log("Nenhum item selecionado ou item vazio.")
+
         else:
-            print("Nenhum item selecionado.")
+            self.log("Nenhum item selecionado.")
 
 
-    def on_adb_finished(self):
-       print("Comando ADB concluído com sucesso!")
+
+    def on_adb_finished(self,msg):
+       self.log(msg=msg)
 
     def on_adb_error(self, error_message):
-      print(f"Erro ao executar o comando ADB: {error_message}")
+       self.log(f"Erro : {error_message}")
+     
 
 
     def stop_process(self):
-        self.adb.reset_adbkeyboard()
+        if self.adb is not None:
+           self.adb.reset_adbkeyboard()
 
         
     def get_planilha(self,path):
@@ -137,6 +148,10 @@ class MainController:
 
         # Salvar a planilha
         wb.save("exemplo.xlsx")
+
+    def log(self,msg):
+        self.main_view.log.append(msg)
+        self.main_view.log.ensureCursorVisible()
 
 
 

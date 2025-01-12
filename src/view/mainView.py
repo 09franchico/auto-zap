@@ -16,15 +16,18 @@ from PySide6.QtWidgets import (
     QFileDialog
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction,QGuiApplication
+
 
 class MainView(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sistema BOT")
-        self.setGeometry(400, 200, 1250,700)
+        self.resize(1250, 700)
 
         self.create_menu_bar()
+        self.center_on_screen()
+        self.showMaximized()
 
         #----------------------------
         self.central_widget = QWidget()
@@ -58,28 +61,51 @@ class MainView(QMainWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
 
         #----------------------------
-        self.text_edit = QTextEdit()
+        self.log = QTextEdit()
+        self.log.setReadOnly(True)
         dock2 = QDockWidget("Logs", self)
-        dock2.setWidget(self.text_edit)
+        dock2.setWidget(self.log)
         dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
-        dock2.setFixedHeight(100) 
+        # dock2.setFixedHeight(100) 
         self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
 
 
         stastus_bar = self.statusBar()
         stastus_bar.showMessage("Bot")
-
         self.setCentralWidget(self.central_widget)
-        #self.setFixedSize(self.width(),self.height())
+
+    def center_on_screen(self):
+        screen = QGuiApplication.primaryScreen()
+        screen_geometry = screen.geometry()
+        x = (screen_geometry.width() - self.width()) // 2
+        y = (screen_geometry.height() - self.height()) // 2
+        self.move(x, y)
+
+    def get_column_data(self, column_name):
+        
+        column_index = -1
+        for col in range(self.table_widget.columnCount()):
+            header_item = self.table_widget.horizontalHeaderItem(col)
+            if header_item and header_item.text() == column_name:
+                column_index = col
+                break
+
+        if column_index == -1:
+            print(f"Coluna '{column_name}' não encontrada.")
+            return []
+
+        # Obter os dados da coluna
+        column_data = []
+        for row in range(self.table_widget.rowCount()):
+            item = self.table_widget.item(row, column_index)
+            column_data.append(item.text() if item else "")
+
+        return column_data
 
 
     def create_menu_bar(self):
-        # Criando a barra de menus
         menu_bar = self.menuBar()
-
-        # Menu "Arquivo"
         file_menu = menu_bar.addMenu("Arquivo")
-
         self.open_action = QAction("Abrir", self)
         self.open_action.setShortcut("Ctrl+O")
         file_menu.addAction(self.open_action)
@@ -91,12 +117,10 @@ class MainView(QMainWindow):
 
         exit_action = QAction("Sair", self)
         exit_action.setShortcut("Ctrl+Q")
-        exit_action.triggered.connect(self.close)  # Conecta o evento de sair
+        exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
-        # Menu "Editar"
         edit_menu = menu_bar.addMenu("Editar")
-
         cut_action = QAction("Cortar", self)
         cut_action.setShortcut("Ctrl+X")
         edit_menu.addAction(cut_action)
@@ -109,9 +133,8 @@ class MainView(QMainWindow):
         paste_action.setShortcut("Ctrl+V")
         edit_menu.addAction(paste_action)
 
-        # Menu "Ajuda"
+       
         help_menu = menu_bar.addMenu("Ajuda")
-
         about_action = QAction("Sobre", self)
         help_menu.addAction(about_action)
 

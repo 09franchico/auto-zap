@@ -262,35 +262,24 @@ class AndroidDeviceManager:
 
         if not self.device:
             print("Nenhum dispositivo conectado.")
-            return None
+            return False, "Nenhum dispositivo conectado."
         
-    
-        # Abrir o WhatsApp com o número fornecido
         self.device.shell(f'am start -a android.intent.action.VIEW -d "https://api.whatsapp.com/send?phone={numero}"')
-        
-        # Aguardar 3 segundos
         self.device.shell("ping 127.0.0.1 -n 3 > nul")
-
         time.sleep(2)
-        
-        # Digitar a mensagem
-        # self.device.shell(f'input text "{msg}"')
         self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{msg}"')
-
-
         result = self.device.screencap()
         image = Image.open(io.BytesIO(result))
         image.save("screenshot.png")
-
         time.sleep(2)
 
         image_path = "what.jpg"
-
-        print("----------- Executou -----------------")
         x, y = self.image_position(image_path,"screenshot.png")
-        
-        # Clicar no botão
         self.click(x, y)
+
+        return True, "scrip executado com sucesso"
+
+
 
 
     def image_position(self,small_image, big_image):
