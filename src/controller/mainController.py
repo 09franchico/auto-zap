@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl import load_workbook
 from src.android.androidDeviceManager import AndroidDeviceManager
 from PySide6.QtCore import QThread, Signal
+import re
 
 
 
@@ -25,28 +26,35 @@ class AdbThread(QThread):
             #--------------------------------
             self.stop = False
             self.adb_manager.connect_device()
+            self.adb_manager.screen_time_on_5min()
             self.adb_manager.habiliar_adbkeyboard()
 
             for phone,msg in zip(self.phones_number, self.messages):
 
                 if self.stop:
+                    self.finished.emit(f"STOP realizado com sucesso!")
                     break
 
-                if phone !="" and msg !="":
+                if self.is_valid_phone_number(phone) and msg !="":
+
                     status, mensagem = self.adb_manager.mensagem_whats(phone, msg)
                     if status:
-                        self.finished.emit(f"[{phone}] : {msg}")
+                        self.finished.emit(f"[{phone}] : MENSAGEM ENVIADA COM SUCESSO 😊")
                     else:
                         self.error.emit(mensagem)
                         break
                 else:
-                    self.error.emit("Telefone VAZIO ou INVALIDO")
+                    self.finished.emit(f"Telefone [VAZIO ou INVALIDO].Por favor, verificar!")
                 
         except Exception as e:
             self.error.emit(str(e))
 
     def stop_script(self):
         self.stop = True
+
+    def is_valid_phone_number(self,phone: str) -> bool:
+        pattern = r'^(\(\d{2}\)\d{5}-\d{4}|\d{11}|\d{7}-\d{4})$'
+        return bool(re.match(pattern, phone))
 
 
 
@@ -55,7 +63,6 @@ class MainController:
     
     def __init__(self):
         #----------------------------
-        # Instanciar o Model e a View
         self.main_model = MainModel()
         self.main_view = MainView()
         self.theme = SetupTheme()
@@ -93,42 +100,16 @@ class MainController:
 
         
     def start_process(self):
-        
         telefones = self.main_view.get_column_data(self.value_send_phone)
-        
         msg = self.main_view.get_column_data("MENSAGEM")
-
         if telefones and msg:
             self.adb = AndroidDeviceManager()
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
             self.adb_thread.error.connect(self.on_adb_error)
             self.adb_thread.start()
-
-        
-        # selected_items = self.main_view.table_widget.selectedIndexes()
-
-        # if selected_items:
-        #     index = selected_items[0]
-        #     item = self.main_view.table_widget.item(index.row(), index.column())
-
-        #     if item:
-        #         self.log(f"Item selecionado :: {item.text()}")
-        #         telefones = self.main_view.get_column_data("TELEFONE")
-        #         msg = self.main_view.get_column_data("MENSAGEM")
-
-        #         self.adb = AndroidDeviceManager()
-        #         self.adb_thread = AdbThread(self.adb, telefones, msg)
-        #         self.adb_thread.finished.connect(self.on_adb_finished)
-        #         self.adb_thread.error.connect(self.on_adb_error)
-        #         self.adb_thread.start()
-
-        #     else:
-        #         self.log("Nenhum item selecionado ou item vazio.")
-
-        # else:
-        #     self.log("Nenhum item selecionado.")
-
+        else:
+            self.log("MENSAGEM não encontrada!")
 
 
     def on_adb_finished(self,msg):
@@ -142,7 +123,6 @@ class MainController:
     def stop_process(self):
         if self.adb is not None:
            self.adb_thread.stop_script()
-           self.adb.reset_adbkeyboard()
 
         
     def get_planilha(self,path):

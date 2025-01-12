@@ -76,9 +76,11 @@ class MainView(QMainWindow):
         stastus_bar.showMessage("Bot")
         self.setCentralWidget(self.central_widget)
 
-    def add_value_combo_box_envio_phone(self,data):
+    def add_value_combo_box_envio_phone(self,data:list):
         self.combo_box_colun_envio_phone.clear()
-        self.combo_box_colun_envio_phone.addItems(data)
+        for item in data:
+            if item:
+               self.combo_box_colun_envio_phone.addItem(item)
 
 
     def center_on_screen(self):

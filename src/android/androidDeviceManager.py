@@ -240,6 +240,14 @@ class AndroidDeviceManager:
         self.device.shell("input keyevent 6")  # Finaliza a chamada
 
         print("Teste PS-2.5.3 concluído.")
+    
+    def screen_time_on_5min(self):
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        
+        self.device.shell(f'settings put system screen_off_timeout 300000') # 5 minutos ligado
+
 
     def habiliar_adbkeyboard(self):
 
