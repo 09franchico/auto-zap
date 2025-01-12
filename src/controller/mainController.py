@@ -13,28 +13,41 @@ class AdbThread(QThread):
     finished = Signal(str)
     error = Signal(str)
 
-    def __init__(self, adb_manager:AndroidDeviceManager, phones_number:list, message, parent=None):
+    def __init__(self, adb_manager:AndroidDeviceManager, phones_number:list, message:list, parent=None):
         super().__init__(parent)
         self.adb_manager = adb_manager
         self.phones_number:list = phones_number
-        self.message = message
+        self.messages:list = message
+        self.stop = False
 
     def run(self):
         try:
-
+            #--------------------------------
+            self.stop = False
             self.adb_manager.connect_device()
             self.adb_manager.habiliar_adbkeyboard()
-            for phone in self.phones_number:
-                status, msg = self.adb_manager.mensagem_whats(phone, self.message)
-                if status:
-                   self.finished.emit(f"[{phone}] : {self.message}")
+
+            for phone,msg in zip(self.phones_number, self.messages):
+
+                if self.stop:
+                    break
+
+                if phone !="" and msg !="":
+                    status, mensagem = self.adb_manager.mensagem_whats(phone, msg)
+                    if status:
+                        self.finished.emit(f"[{phone}] : {msg}")
+                    else:
+                        self.error.emit(mensagem)
+                        break
                 else:
-                   self.error.emit(msg)
-                   break
-
-
+                    self.error.emit("Telefone VAZIO ou INVALIDO")
+                
         except Exception as e:
             self.error.emit(str(e))
+
+    def stop_script(self):
+        self.stop = True
+
 
 
 
@@ -48,6 +61,7 @@ class MainController:
         self.theme = SetupTheme()
         self.theme.setupTheme('dark')
         self.theme_select()
+        self.value_send_phone = None
         self.data_plan = None
         self.adb = None
 
@@ -59,43 +73,61 @@ class MainController:
     def theme_select(self):
         self.main_view.combo_box.addItems(self.theme.getTheme())
 
+    def text_selection_phone(self,txt):
+        self.value_send_phone = txt
 
     def setup_connections(self):
         self.main_view.start_process.clicked.connect(self.start_process)
         self.main_view.stop_process.clicked.connect(self.stop_process)
         self.main_view.open_action.triggered.connect(self.open_action_file)
         self.main_view.combo_box.currentTextChanged.connect(self.theme.setupTheme)
+        self.main_view.combo_box_colun_envio_phone.currentTextChanged.connect(self.text_selection_phone)
 
     def open_action_file(self):
         file_path_xlsx = self.main_view.open_action_file()
 
         if file_path_xlsx is not None:
             self.data_plan = self.get_planilha(file_path_xlsx)
+            self.main_view.add_value_combo_box_envio_phone(self.data_plan.get('header_label'))
             self.main_view.show_table_widget_view(data=self.data_plan)
 
         
     def start_process(self):
-        selected_items = self.main_view.table_widget.selectedIndexes()
+        
+        telefones = self.main_view.get_column_data(self.value_send_phone)
+        
+        msg = self.main_view.get_column_data("MENSAGEM")
 
-        if selected_items:
-            index = selected_items[0]
-            item = self.main_view.table_widget.item(index.row(), index.column())
+        if telefones and msg:
+            self.adb = AndroidDeviceManager()
+            self.adb_thread = AdbThread(self.adb, telefones, msg)
+            self.adb_thread.finished.connect(self.on_adb_finished)
+            self.adb_thread.error.connect(self.on_adb_error)
+            self.adb_thread.start()
 
-            if item:
-                self.log(f"Item selecionado :: {item.text()}")
-                telefones = self.main_view.get_column_data("TELEFONE")
+        
+        # selected_items = self.main_view.table_widget.selectedIndexes()
 
-                self.adb = AndroidDeviceManager()
-                self.adb_thread = AdbThread(self.adb, telefones, item.text())
-                self.adb_thread.finished.connect(self.on_adb_finished)
-                self.adb_thread.error.connect(self.on_adb_error)
-                self.adb_thread.start()
+        # if selected_items:
+        #     index = selected_items[0]
+        #     item = self.main_view.table_widget.item(index.row(), index.column())
 
-            else:
-                self.log("Nenhum item selecionado ou item vazio.")
+        #     if item:
+        #         self.log(f"Item selecionado :: {item.text()}")
+        #         telefones = self.main_view.get_column_data("TELEFONE")
+        #         msg = self.main_view.get_column_data("MENSAGEM")
 
-        else:
-            self.log("Nenhum item selecionado.")
+        #         self.adb = AndroidDeviceManager()
+        #         self.adb_thread = AdbThread(self.adb, telefones, msg)
+        #         self.adb_thread.finished.connect(self.on_adb_finished)
+        #         self.adb_thread.error.connect(self.on_adb_error)
+        #         self.adb_thread.start()
+
+        #     else:
+        #         self.log("Nenhum item selecionado ou item vazio.")
+
+        # else:
+        #     self.log("Nenhum item selecionado.")
 
 
 
@@ -109,6 +141,7 @@ class MainController:
 
     def stop_process(self):
         if self.adb is not None:
+           self.adb_thread.stop_script()
            self.adb.reset_adbkeyboard()
 
         

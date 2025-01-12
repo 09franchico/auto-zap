@@ -35,6 +35,7 @@ class MainView(QMainWindow):
 
         #----------------------------
         # Widgets
+        self.combo_box_colun_envio_phone = QComboBox()
         self.start_process = QPushButton("Iniciar processo")
         self.stop_process = QPushButton("Parar processo")
         self.combo_box = QComboBox()
@@ -42,13 +43,14 @@ class MainView(QMainWindow):
 
         #---------------------------- 
         self.table_widget = QTableWidget(0, 0, self)
-        self.layout_grid.addWidget(self.table_widget, 1, 1, 2, 1)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 3, 1)
 
         #----------------------------
         # Adicionar widgets ao layout
-        self.layout_grid.addWidget(self.start_process,1,2)
-        self.layout_grid.addWidget(self.stop_process,2,2,Qt.AlignmentFlag.AlignTop)
-        self.layout_grid.addWidget(self.combo_box,2,2,Qt.AlignmentFlag.AlignBottom)
+        self.layout_grid.addWidget(self.combo_box_colun_envio_phone,1,2)
+        self.layout_grid.addWidget(self.start_process,2,2)
+        self.layout_grid.addWidget(self.stop_process,3,2,Qt.AlignmentFlag.AlignTop)
+        self.layout_grid.addWidget(self.combo_box,3,2,Qt.AlignmentFlag.AlignBottom)
 
         #----------------------------
         tree_widget = QTreeWidget()
@@ -66,13 +68,18 @@ class MainView(QMainWindow):
         dock2 = QDockWidget("Logs", self)
         dock2.setWidget(self.log)
         dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
-        # dock2.setFixedHeight(100) 
+        dock2.setFixedHeight(150) 
         self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
 
 
         stastus_bar = self.statusBar()
         stastus_bar.showMessage("Bot")
         self.setCentralWidget(self.central_widget)
+
+    def add_value_combo_box_envio_phone(self,data):
+        self.combo_box_colun_envio_phone.clear()
+        self.combo_box_colun_envio_phone.addItems(data)
+
 
     def center_on_screen(self):
         screen = QGuiApplication.primaryScreen()
@@ -174,7 +181,7 @@ class MainView(QMainWindow):
                 item = QTableWidgetItem(str(cell_data))
                 self.table_widget.setItem(row_index, col_index, item)
         
-        self.layout_grid.addWidget(self.table_widget, 1, 1, 2, 1)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 3, 1)
 
 
     def populate_tree(self, tree_widget):
