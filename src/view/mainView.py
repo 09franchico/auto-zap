@@ -13,7 +13,10 @@ from PySide6.QtWidgets import (
     QComboBox,
     QStyle,
     QTextEdit,
-    QFileDialog
+    QFileDialog,
+    QProgressBar,
+    QSpinBox,
+    QVBoxLayout
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,QGuiApplication,QTextCursor
@@ -26,7 +29,6 @@ class MainView(QMainWindow):
         self.resize(1250, 700)
 
         self.create_menu_bar()
-        # self.center_on_screen()
         self.showMaximized()
 
         #----------------------------
@@ -35,32 +37,53 @@ class MainView(QMainWindow):
 
         #----------------------------
         # Widgets
+        self.message_text = QTextEdit()
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setValue(10) 
+        self.progress_bar.setTextVisible(True)
         self.combo_box_colun_envio_phone = QComboBox()
         self.start_process = QPushButton("Iniciar processo")
         self.stop_process = QPushButton("Parar processo")
+        self.spin_box = QSpinBox()
+        self.spin_box.setRange(0, 100) 
+        self.spin_box.setValue(10)
+        self.spin_box.setSingleStep(1)
         self.combo_box = QComboBox()
 
 
         #---------------------------- 
         self.table_widget = QTableWidget(0, 0, self)
-        self.layout_grid.addWidget(self.table_widget, 1, 1, 3, 1)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 6, 1)
+        self.layout_grid.addWidget(self.message_text,1,2)
 
         #----------------------------
-        # Adicionar widgets ao layout
-        self.layout_grid.addWidget(self.combo_box_colun_envio_phone,1,2)
-        self.layout_grid.addWidget(self.start_process,2,2)
-        self.layout_grid.addWidget(self.stop_process,3,2,Qt.AlignmentFlag.AlignTop)
-        self.layout_grid.addWidget(self.combo_box,3,2,Qt.AlignmentFlag.AlignBottom)
+        self.right_layout = QGridLayout()
+        self.right_layout.addWidget(self.progress_bar,1,1,1,2)
+        self.right_layout.addWidget(self.combo_box_colun_envio_phone,2,1,1,2)
+        self.right_layout.addWidget(self.start_process,3,1)
+        self.right_layout.addWidget(self.stop_process,3,2)
+        self.right_layout.addWidget(self.spin_box,4,2)
+        # self.right_layout.addWidget(self.combo_box,4,2)
+
+
+        self.layout_grid.addLayout(self.right_layout, 2, 2, 5, 1)
 
         #----------------------------
         tree_widget = QTreeWidget()
         tree_widget.setHeaderLabels(["Automção"])
         self.populate_tree(tree_widget)
 
+        #------------------------------
+        dock_layout = QVBoxLayout()
+        dock_layout.addWidget(tree_widget)
+        dock_layout.addWidget(self.combo_box)
+        dock_widget_content = QWidget()
+        dock_widget_content.setLayout(dock_layout)
+
         dock1 = QDockWidget("Menus", self)
-        dock1.setWidget(tree_widget)
+        dock1.setWidget(dock_widget_content)
         dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
-        self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
+        self.addDockWidget(Qt.RightDockWidgetArea, dock1)
 
         #----------------------------
         self.log = QTextEdit()
@@ -183,7 +206,7 @@ class MainView(QMainWindow):
                 item = QTableWidgetItem(str(cell_data))
                 self.table_widget.setItem(row_index, col_index, item)
         
-        self.layout_grid.addWidget(self.table_widget, 1, 1, 3, 1)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 6, 1)
 
 
     def populate_tree(self, tree_widget):

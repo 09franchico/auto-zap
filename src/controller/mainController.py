@@ -29,20 +29,21 @@ class AdbThread(QThread):
             self.adb_manager.screen_time_on_5min()
             self.adb_manager.habiliar_adbkeyboard()
 
-            for phone,msg in zip(self.phones_number, self.messages):
+            for phone in self.phones_number:
 
                 if self.stop:
                     self.finished.emit(f"STOP realizado com sucesso!")
                     break
 
-                if self.is_valid_phone_number(phone) and msg !="":
+                if self.is_valid_phone_number(phone):
 
-                    status, mensagem = self.adb_manager.mensagem_whats(phone, msg)
-                    if status:
-                        self.finished.emit(f"[{phone}] : MENSAGEM ENVIADA COM SUCESSO 😊")
-                    else:
-                        self.error.emit(mensagem)
-                        break
+                    for msg in self.messages:
+                        status, mensagem = self.adb_manager.mensagem_whats(phone, msg)
+                        if status:
+                            self.finished.emit(f"[{phone}] : MENSAGEM ENVIADA COM SUCESSO 😊")
+                        else:
+                            self.error.emit(mensagem)
+                            break
                 else:
                     self.finished.emit(f"Telefone [VAZIO ou INVALIDO].Por favor, verificar!")
                 
@@ -101,15 +102,24 @@ class MainController:
         
     def start_process(self):
         telefones = self.main_view.get_column_data(self.value_send_phone)
-        msg = self.main_view.get_column_data("MENSAGEM")
-        if telefones and msg:
+        # msg = self.main_view.get_column_data("MENSAGEM")
+        if telefones:
+            text = self.main_view.message_text.toPlainText()
+
+            if text.strip() == '':
+                self.log("MENSAGEM não encontrada!")
+                return
+            
+            msg = []
+            msg.append(text)
+            
             self.adb = AndroidDeviceManager()
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
             self.adb_thread.error.connect(self.on_adb_error)
             self.adb_thread.start()
         else:
-            self.log("MENSAGEM não encontrada!")
+            self.log("NUMERO não encontrado!")
 
 
     def on_adb_finished(self,msg):
