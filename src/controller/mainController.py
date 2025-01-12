@@ -27,7 +27,6 @@ class AdbThread(QThread):
         try:
             #--------------------------------
             self.stop = False
-            self.adb_manager.connect_device()
             self.adb_manager.screen_time_on_5min()
             self.adb_manager.habiliar_adbkeyboard()
 
@@ -119,6 +118,9 @@ class MainController:
             msg.append(text)
             
             self.adb = AndroidDeviceManager()
+            self.adb.connect_device()
+            # self.main_view.combo_box_device.addItem(self.adb.get_device_info())
+
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
             self.adb_thread.error.connect(self.on_adb_error)
