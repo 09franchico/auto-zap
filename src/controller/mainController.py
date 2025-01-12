@@ -183,8 +183,7 @@ class MainController:
         wb.save("exemplo.xlsx")
 
     def log(self,msg):
-        self.main_view.log.append(msg)
-        self.main_view.log.ensureCursorVisible()
+        self.main_view.log_view(msg=msg)
 
 
 

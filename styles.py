@@ -4,8 +4,6 @@ import qdarktheme
 
 qss = """
 QPushButton {
-    border-width: 2px;
-    border-style: dashed;
     height: 30px;
 }
 """

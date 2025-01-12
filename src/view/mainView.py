@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
     QFileDialog
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction,QGuiApplication
+from PySide6.QtGui import QAction,QGuiApplication,QTextCursor
 
 
 class MainView(QMainWindow):
@@ -26,7 +26,7 @@ class MainView(QMainWindow):
         self.resize(1250, 700)
 
         self.create_menu_bar()
-        self.center_on_screen()
+        # self.center_on_screen()
         self.showMaximized()
 
         #----------------------------
@@ -222,5 +222,9 @@ class MainView(QMainWindow):
         QTreeWidgetItem(parent_item3, ["Filho 3.2"]).setIcon(0,title_icon)
 
         tree_widget.expandAll()
+
+    def log_view(self,msg):
+        self.log.append(msg)
+        self.log.moveCursor(QTextCursor.End)
 
 
