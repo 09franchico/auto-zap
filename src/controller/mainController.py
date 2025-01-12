@@ -13,6 +13,8 @@ class AdbThread(QThread):
 
     finished = Signal(str)
     error = Signal(str)
+    progress = Signal(int)
+
 
     def __init__(self, adb_manager:AndroidDeviceManager, phones_number:list, message:list, parent=None):
         super().__init__(parent)
@@ -29,10 +31,13 @@ class AdbThread(QThread):
             self.adb_manager.screen_time_on_5min()
             self.adb_manager.habiliar_adbkeyboard()
 
-            for phone in self.phones_number:
+            for index, phone in enumerate(self.phones_number, start=1):
+
+                progress_int = int((index / len(self.phones_number)) * 100)
+                self.progress.emit(progress_int)
 
                 if self.stop:
-                    self.finished.emit(f"STOP realizado com sucesso!")
+                    self.error.emit(f"STOP realizado com sucesso!")
                     break
 
                 if self.is_valid_phone_number(phone):
@@ -102,10 +107,10 @@ class MainController:
         
     def start_process(self):
         telefones = self.main_view.get_column_data(self.value_send_phone)
-        # msg = self.main_view.get_column_data("MENSAGEM")
+
         if telefones:
             text = self.main_view.message_text.toPlainText()
-
+            
             if text.strip() == '':
                 self.log("MENSAGEM não encontrada!")
                 return
@@ -117,16 +122,19 @@ class MainController:
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
             self.adb_thread.error.connect(self.on_adb_error)
+            self.adb_thread.progress.connect(self.progress_send_message)
             self.adb_thread.start()
         else:
             self.log("NUMERO não encontrado!")
 
+    def progress_send_message(self,value:int):
+        self.main_view.progress_bar.setValue(value)
 
     def on_adb_finished(self,msg):
        self.log(msg=msg)
 
     def on_adb_error(self, error_message):
-       self.log(f"Erro : {error_message}")
+       self.log(f"{error_message}")
      
 
 

@@ -37,9 +37,10 @@ class MainView(QMainWindow):
 
         #----------------------------
         # Widgets
+        self.combo_box_device = QComboBox()
         self.message_text = QTextEdit()
         self.progress_bar = QProgressBar()
-        self.progress_bar.setValue(10) 
+        self.progress_bar.setValue(0) 
         self.progress_bar.setTextVisible(True)
         self.combo_box_colun_envio_phone = QComboBox()
         self.start_process = QPushButton("Iniciar processo")
@@ -53,20 +54,20 @@ class MainView(QMainWindow):
 
         #---------------------------- 
         self.table_widget = QTableWidget(0, 0, self)
-        self.layout_grid.addWidget(self.table_widget, 1, 1, 6, 1)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 7, 1)
         self.layout_grid.addWidget(self.message_text,1,2)
 
         #----------------------------
         self.right_layout = QGridLayout()
         self.right_layout.addWidget(self.progress_bar,1,1,1,2)
-        self.right_layout.addWidget(self.combo_box_colun_envio_phone,2,1,1,2)
+        self.right_layout.addWidget(self.combo_box_colun_envio_phone,2,1)
+        self.right_layout.addWidget(self.combo_box_device,2,2)
         self.right_layout.addWidget(self.start_process,3,1)
         self.right_layout.addWidget(self.stop_process,3,2)
         self.right_layout.addWidget(self.spin_box,4,2)
-        # self.right_layout.addWidget(self.combo_box,4,2)
 
 
-        self.layout_grid.addLayout(self.right_layout, 2, 2, 5, 1)
+        self.layout_grid.addLayout(self.right_layout, 3, 2, 5, 1)
 
         #----------------------------
         tree_widget = QTreeWidget()
@@ -206,7 +207,7 @@ class MainView(QMainWindow):
                 item = QTableWidgetItem(str(cell_data))
                 self.table_widget.setItem(row_index, col_index, item)
         
-        self.layout_grid.addWidget(self.table_widget, 1, 1, 6, 1)
+        self.layout_grid.addWidget(self.table_widget, 1, 1, 7, 1)
 
 
     def populate_tree(self, tree_widget):
