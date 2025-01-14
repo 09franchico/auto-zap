@@ -73,6 +73,7 @@ class MainView(QMainWindow):
         tree_widget = QTreeWidget()
         tree_widget.setHeaderLabels(["Automção"])
         self.populate_tree(tree_widget)
+        tree_widget.itemClicked.connect(self.on_item_clicked)
 
         #------------------------------
         dock_layout = QVBoxLayout()
@@ -248,6 +249,16 @@ class MainView(QMainWindow):
         QTreeWidgetItem(parent_item3, ["Filho 3.2"]).setIcon(0,title_icon)
 
         tree_widget.expandAll()
+
+    def on_item_clicked(self, item, column):
+        print(f"Item clicado: {item.text(column)}")
+
+        # if item.text(column) == "Msg Whats":
+        #     self.central_widget.show()
+        # else:
+        #    self.central_widget.close()
+
+
 
     def log_view(self,msg):
         self.log.append(msg)
