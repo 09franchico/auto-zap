@@ -219,36 +219,36 @@ class MainView(QMainWindow):
         title_icon = self.style().standardIcon(title_pixmap)
 
         #----------------------------------
-        parent_item = QTreeWidgetItem(tree_widget, ["Msg Telegram"])
-        parent_item.setIcon(0, save_icon)
+        whats_item = QTreeWidgetItem(tree_widget, ["Whatsapp"])
+        whats_item.setIcon(0, save_icon)
 
-        child1 = QTreeWidgetItem(parent_item, ["Filho 1.1"])
+        child1 = QTreeWidgetItem(whats_item, ["Filho 1.1"])
         child1.setIcon(0,title_icon)
         neto_child1 = QTreeWidgetItem(child1, ["Neto 1.1.1"]).setIcon(0,title_icon)
         # neto_child1.setIcon(0,title_icon)
 
         QTreeWidgetItem(child1, ["Neto 1.1.2"]).setIcon(0,title_icon)
 
-        QTreeWidgetItem(parent_item, ["Filho 1.2"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item, ["Filho 1.3"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item, ["Filho 1.4"]).setIcon(0,title_icon)
+        QTreeWidgetItem(whats_item, ["Filho 1.2"]).setIcon(0,title_icon)
+        QTreeWidgetItem(whats_item, ["Filho 1.3"]).setIcon(0,title_icon)
+        QTreeWidgetItem(whats_item, ["Filho 1.4"]).setIcon(0,title_icon)
 
         #----------------------------------
-        parent_item2 = QTreeWidgetItem(tree_widget, ["Msg Whats"])
-        parent_item2.setIcon(0, save_icon)
-        QTreeWidgetItem(parent_item2, ["Filho 2.1"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item2, ["Filho 2.2"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item2, ["Filho 2.3"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item2, ["Filho 2.4"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item2, ["Filho 2.5"]).setIcon(0,title_icon)
+        telegram_item = QTreeWidgetItem(tree_widget, ["Telegram"])
+        telegram_item.setIcon(0, save_icon)
+        QTreeWidgetItem(telegram_item, ["Filho 2.1"]).setIcon(0,title_icon)
+        QTreeWidgetItem(telegram_item, ["Filho 2.2"]).setIcon(0,title_icon)
+        QTreeWidgetItem(telegram_item, ["Filho 2.3"]).setIcon(0,title_icon)
+        QTreeWidgetItem(telegram_item, ["Filho 2.4"]).setIcon(0,title_icon)
+        QTreeWidgetItem(telegram_item, ["Filho 2.5"]).setIcon(0,title_icon)
 
        #----------------------------------
-        parent_item3 = QTreeWidgetItem(tree_widget, ["WEB"])
-        parent_item3.setIcon(0, save_icon)
-        QTreeWidgetItem(parent_item3, ["Filho 3.1"]).setIcon(0,title_icon)
-        QTreeWidgetItem(parent_item3, ["Filho 3.2"]).setIcon(0,title_icon)
+        web_item = QTreeWidgetItem(tree_widget, ["Web"])
+        web_item.setIcon(0, save_icon)
+        QTreeWidgetItem(web_item, ["Filho 3.1"]).setIcon(0,title_icon)
+        QTreeWidgetItem(web_item, ["Filho 3.2"]).setIcon(0,title_icon)
 
-        tree_widget.expandAll()
+        whats_item.setExpanded(True)
 
     def on_item_clicked(self, item, column):
         print(f"Item clicado: {item.text(column)}")
