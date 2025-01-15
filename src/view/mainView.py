@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,QGuiApplication,QTextCursor
+from src.view.modalCreateAutoView import ModalCreateAutoView
 
 
 class MainView(QMainWindow):
@@ -70,14 +71,13 @@ class MainView(QMainWindow):
         self.layout_grid.addLayout(self.right_layout, 3, 2, 5, 1)
 
         #----------------------------
-        tree_widget = QTreeWidget()
-        tree_widget.setHeaderLabels(["Automção"])
-        self.populate_tree(tree_widget)
-        tree_widget.itemClicked.connect(self.on_item_clicked)
+        self.tree_widget = QTreeWidget()
+        self.tree_widget.setHeaderLabels(["Automção"])
+        self.populate_tree(self.tree_widget)
 
         #------------------------------
         dock_layout = QVBoxLayout()
-        dock_layout.addWidget(tree_widget)
+        dock_layout.addWidget(self.tree_widget)
         dock_layout.addWidget(self.combo_box)
         dock_widget_content = QWidget()
         dock_widget_content.setLayout(dock_layout)
@@ -100,6 +100,10 @@ class MainView(QMainWindow):
         stastus_bar = self.statusBar()
         stastus_bar.showMessage("Bot")
         self.setCentralWidget(self.central_widget)
+
+        #  # Armazenar a instância do modal
+        # self.modal = None
+
 
     def add_value_combo_box_envio_phone(self,data:list):
         self.combo_box_colun_envio_phone.clear()
@@ -222,9 +226,9 @@ class MainView(QMainWindow):
         whats_item = QTreeWidgetItem(tree_widget, ["Whatsapp"])
         whats_item.setIcon(0, save_icon)
 
-        child1 = QTreeWidgetItem(whats_item, ["Filho 1.1"])
+        child1 = QTreeWidgetItem(whats_item, ["Criar-automacao"])
         child1.setIcon(0,title_icon)
-        neto_child1 = QTreeWidgetItem(child1, ["Neto 1.1.1"]).setIcon(0,title_icon)
+        neto_child1 = QTreeWidgetItem(child1, ["Modal-de-criacao"]).setIcon(0,title_icon)
         # neto_child1.setIcon(0,title_icon)
 
         QTreeWidgetItem(child1, ["Neto 1.1.2"]).setIcon(0,title_icon)
@@ -250,14 +254,22 @@ class MainView(QMainWindow):
 
         whats_item.setExpanded(True)
 
-    def on_item_clicked(self, item, column):
-        print(f"Item clicado: {item.text(column)}")
+    # def on_item_clicked(self, item, column):
+    #     # print(f"Item clicado: {item.text(column)}")
 
-        # if item.text(column) == "Msg Whats":
-        #     self.central_widget.show()
-        # else:
-        #    self.central_widget.close()
+    #     # if item.text(column) == "Modal-de-criacao":
+    #      self.show_modal()
+    
 
+    # def show_modal(self):
+    #     if self.modal is None:  # Apenas cria o modal se ele não existir
+    #         self.modal = ModalCreateAutoView(f'C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/outros/window_dump.xml')
+    #         self.modal.show()
+    #         print("ESPERANDO")
+        
+    #     print("TERMINOU")
+            
+            
 
 
     def log_view(self,msg):

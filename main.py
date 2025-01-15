@@ -15,7 +15,7 @@ class App:
         StartDaemon().start()
         self.main_controller = MainController()
 
-
+     
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     system = App(app=app)

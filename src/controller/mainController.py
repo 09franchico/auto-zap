@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 from src.android.androidDeviceManager import AndroidDeviceManager
 from PySide6.QtCore import QThread, Signal
 import re
+from src.view.modalCreateAutoView import ModalCreateAutoView
 
 
 
@@ -70,12 +71,16 @@ class MainController:
         #----------------------------
         self.main_model = MainModel()
         self.main_view = MainView()
+        #-------------------------
         self.theme = SetupTheme()
         self.theme.setupTheme('dark')
         self.theme_select()
+
+        #------------------------
         self.value_send_phone = None
         self.data_plan = None
         self.adb = None
+        self.modal = None
 
         #-------------------------
         self.setup_connections()
@@ -94,6 +99,13 @@ class MainController:
         self.main_view.open_action.triggered.connect(self.open_action_file)
         self.main_view.combo_box.currentTextChanged.connect(self.theme.setupTheme)
         self.main_view.combo_box_colun_envio_phone.currentTextChanged.connect(self.text_selection_phone)
+        self.main_view.tree_widget.itemClicked.connect(self.on_item_clicked_tree)
+
+    def on_item_clicked_tree(self):
+        if self.modal is None: 
+            self.modal = ModalCreateAutoView(f'C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/outros/window_dump.xml')
+            self.modal.show()
+
 
     def open_action_file(self):
         file_path_xlsx = self.main_view.open_action_file()
