@@ -44,7 +44,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     # Carrega o arquivo XML do uiautomator (substitua pelo caminho do seu arquivo)
-    parser = UIAutomatorParser('window_adump.xml')
+    parser = UIAutomatorParser('outros/window_dump.xml')
     parser.show()
 
     sys.exit(app.exec())

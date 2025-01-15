@@ -275,15 +275,52 @@ class AndroidDeviceManager:
         self.device.shell(f'am start -a android.intent.action.VIEW -d "https://api.whatsapp.com/send?phone={numero}"')
         self.device.shell("ping 127.0.0.1 -n 3 > nul")
         time.sleep(2)
-        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{msg}"')
-        result = self.device.screencap()
-        image = Image.open(io.BytesIO(result))
-        image.save("screenshot.png")
-        time.sleep(2)
 
-        image_path = "what.jpg"
-        x, y = self.image_position(image_path,"screenshot.png")
-        self.click(x, y)
+        x, y=self.calculate_center('[69,1465][504,1483]')
+        self.click(x,y)
+        time.sleep(1)
+
+        self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{msg}"')
+
+        time.sleep(1)
+
+        # result = self.device.screencap()
+        # image = Image.open(io.BytesIO(result))
+        # image.save("screenshot.png")
+        # time.sleep(2)
+
+        # image_path = "what.jpg"
+        # x, y = self.image_position(image_path,"screenshot.png")
+        # self.click(x, y)
+
+          #envia o arquivo
+        x, y =self.calculate_center('[639,1450][708,1483]')
+        self.click(x,y)
+        time.sleep(1)
+
+        #clica no file
+        x, y=self.calculate_center('[504,1455][573,1483]')
+        self.click(x,y)
+
+        time.sleep(1)
+
+        #clica em documentos
+        x, y=self.calculate_center('[139,1160][217,1238]')
+        self.click(x,y)
+
+        time.sleep(1)
+
+        #seleciona o arquivo
+        x, y=self.calculate_center('[104,403][335,436]')
+        self.click(x,y)
+
+        time.sleep(1)
+
+        #envia o arquivo
+        x, y=self.calculate_center('[639,1450][708,1483]')
+        self.click(x,y)
+
+        time.sleep(1)
 
         return True, "scrip executado com sucesso"
 
@@ -307,3 +344,21 @@ class AndroidDeviceManager:
             print("Nenhum dispositivo conectado.")
             return None
         self.device.shell(f"input tap {tap_x} {tap_y}")
+
+    
+    def calculate_center(self, bounds):
+        try:
+            bounds = bounds.strip("[]").split("][")
+            if len(bounds) != 2:
+                raise ValueError("Bounds string format is incorrect. Expected format: '[x1,y1][x2,y2]'")
+            
+            # Separar e converter as coordenadas
+            x1, y1 = map(int, bounds[0].split(","))
+            x2, y2 = map(int, bounds[1].split(","))
+            
+            # Calcular o centro
+            center_x = (x1 + x2) // 2
+            center_y = (y1 + y2) // 2
+            return center_x, center_y
+        except Exception as e:
+            raise ValueError(f"Error calculating center: {e}")
