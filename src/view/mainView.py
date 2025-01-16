@@ -33,6 +33,43 @@ class MainView(QMainWindow):
         self.showMaximized()
 
         #----------------------------
+        self.central_widget_main()
+
+
+        #----------------------------
+        self.combo_box = QComboBox()
+        self.tree_widget = QTreeWidget()
+        self.tree_widget.setHeaderLabels(["Automção"])
+        self.populate_tree(self.tree_widget)
+
+        #------------------------------
+        dock_layout = QVBoxLayout()
+        dock_layout.addWidget(self.tree_widget)
+        dock_layout.addWidget(self.combo_box)
+        dock_widget_content = QWidget()
+        dock_widget_content.setLayout(dock_layout)
+
+        dock1 = QDockWidget("Menus", self)
+        dock1.setWidget(dock_widget_content)
+        dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
+        dock1.setMaximumWidth(270)
+        self.addDockWidget(Qt.RightDockWidgetArea, dock1)
+
+        #----------------------------
+        self.log = QTextEdit()
+        self.log.setReadOnly(True)
+        dock2 = QDockWidget("Logs", self)
+        dock2.setWidget(self.log)
+        dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
+        dock2.setFixedHeight(150) 
+        self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
+        stastus_bar = self.statusBar()
+        stastus_bar.showMessage("Bot")
+
+        
+
+    def central_widget_main(self):
+        #----------------------------
         self.central_widget = QWidget()
         self.layout_grid = QGridLayout(self.central_widget)
 
@@ -50,7 +87,6 @@ class MainView(QMainWindow):
         self.spin_box.setRange(0, 100) 
         self.spin_box.setValue(10)
         self.spin_box.setSingleStep(1)
-        self.combo_box = QComboBox()
 
 
         #---------------------------- 
@@ -66,43 +102,12 @@ class MainView(QMainWindow):
         self.right_layout.addWidget(self.start_process,3,1)
         self.right_layout.addWidget(self.stop_process,3,2)
         self.right_layout.addWidget(self.spin_box,4,2)
-
-
         self.layout_grid.addLayout(self.right_layout, 3, 2, 5, 1)
 
-        #----------------------------
-        self.tree_widget = QTreeWidget()
-        self.tree_widget.setHeaderLabels(["Automção"])
-        self.populate_tree(self.tree_widget)
-
-        #------------------------------
-        dock_layout = QVBoxLayout()
-        dock_layout.addWidget(self.tree_widget)
-        dock_layout.addWidget(self.combo_box)
-        dock_widget_content = QWidget()
-        dock_widget_content.setLayout(dock_layout)
-
-        dock1 = QDockWidget("Menus", self)
-        dock1.setWidget(dock_widget_content)
-        dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
-        self.addDockWidget(Qt.RightDockWidgetArea, dock1)
-
-        #----------------------------
-        self.log = QTextEdit()
-        self.log.setReadOnly(True)
-        dock2 = QDockWidget("Logs", self)
-        dock2.setWidget(self.log)
-        dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
-        dock2.setFixedHeight(150) 
-        self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
-
-
-        stastus_bar = self.statusBar()
-        stastus_bar.showMessage("Bot")
+        
         self.setCentralWidget(self.central_widget)
 
-        #  # Armazenar a instância do modal
-        # self.modal = None
+
 
 
     def add_value_combo_box_envio_phone(self,data:list):
@@ -231,9 +236,9 @@ class MainView(QMainWindow):
         neto_child1 = QTreeWidgetItem(child1, ["Modal-de-criacao"]).setIcon(0,title_icon)
         # neto_child1.setIcon(0,title_icon)
 
-        QTreeWidgetItem(child1, ["Neto 1.1.2"]).setIcon(0,title_icon)
+        QTreeWidgetItem(child1, ["Node-automatico"]).setIcon(0,title_icon)
 
-        QTreeWidgetItem(whats_item, ["Filho 1.2"]).setIcon(0,title_icon)
+        QTreeWidgetItem(whats_item, ["Visao-automatico"]).setIcon(0,title_icon)
         QTreeWidgetItem(whats_item, ["Filho 1.3"]).setIcon(0,title_icon)
         QTreeWidgetItem(whats_item, ["Filho 1.4"]).setIcon(0,title_icon)
 
@@ -254,23 +259,8 @@ class MainView(QMainWindow):
 
         whats_item.setExpanded(True)
 
-    # def on_item_clicked(self, item, column):
-    #     # print(f"Item clicado: {item.text(column)}")
 
-    #     # if item.text(column) == "Modal-de-criacao":
-    #      self.show_modal()
     
-
-    # def show_modal(self):
-    #     if self.modal is None:  # Apenas cria o modal se ele não existir
-    #         self.modal = ModalCreateAutoView(f'C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/outros/window_dump.xml')
-    #         self.modal.show()
-    #         print("ESPERANDO")
-        
-    #     print("TERMINOU")
-            
-            
-
 
     def log_view(self,msg):
         self.log.append(msg)
