@@ -231,14 +231,14 @@ class MainView(QMainWindow):
         whats_item = QTreeWidgetItem(tree_widget, ["Whatsapp"])
         whats_item.setIcon(0, save_icon)
 
-        child1 = QTreeWidgetItem(whats_item, ["Criar-automacao"])
+        child1 = QTreeWidgetItem(whats_item, ["Automacao-elemento"])
         child1.setIcon(0,title_icon)
         neto_child1 = QTreeWidgetItem(child1, ["Modal-de-criacao"]).setIcon(0,title_icon)
         # neto_child1.setIcon(0,title_icon)
 
         QTreeWidgetItem(child1, ["Node-automatico"]).setIcon(0,title_icon)
 
-        QTreeWidgetItem(whats_item, ["Visao-automatico"]).setIcon(0,title_icon)
+        QTreeWidgetItem(whats_item, ["Automacao-visao"]).setIcon(0,title_icon)
         QTreeWidgetItem(whats_item, ["Filho 1.3"]).setIcon(0,title_icon)
         QTreeWidgetItem(whats_item, ["Filho 1.4"]).setIcon(0,title_icon)
 
