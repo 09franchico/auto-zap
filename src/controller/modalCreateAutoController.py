@@ -33,8 +33,8 @@ class ModalCreateAutoController:
        self.bounds = item.text(column)
 
     def set_file_xml(self):
-        self.modal_create_auto.set_file_xml()
         self.adb.dump_screen_xml()
+        self.modal_create_auto.set_file_xml()
 
     def action_phone_execute(self):
         self.adb.execute_click_screen(self.bounds)

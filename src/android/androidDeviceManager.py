@@ -75,11 +75,7 @@ class AndroidDeviceManager:
             return None
         
         self.device.shell(f'uiautomator dump')
-        time.sleep(2)
         self.device.pull(f'/sdcard/window_dump.xml',"window_dump.xml")
-
-
-
 
 
     def mensagem_whats(self,numero, msg):
