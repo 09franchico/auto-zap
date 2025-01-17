@@ -76,6 +76,7 @@ class AndroidDeviceManager:
         
         self.device.shell(f'uiautomator dump')
         self.device.pull(f'/sdcard/window_dump.xml',"window_dump.xml")
+        self.save_screnshot()
 
 
     def mensagem_whats(self,numero, msg):
@@ -95,15 +96,6 @@ class AndroidDeviceManager:
         self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{msg}"')
 
         time.sleep(1)
-
-        # result = self.device.screencap()
-        # image = Image.open(io.BytesIO(result))
-        # image.save("screenshot.png")
-        # time.sleep(2)
-
-        # image_path = "what.jpg"
-        # x, y = self.image_position(image_path,"screenshot.png")
-        # self.click(x, y)
 
         #envia o arquivo
         x, y =self.calculate_center('[639,1450][708,1483]')
@@ -137,6 +129,10 @@ class AndroidDeviceManager:
         return True, "scrip executado com sucesso"
 
 
+    def save_screnshot(self):
+        result = self.device.screencap()
+        image = Image.open(io.BytesIO(result))
+        image.save("screenshot.png")
 
 
     def image_position(self,small_image, big_image):
