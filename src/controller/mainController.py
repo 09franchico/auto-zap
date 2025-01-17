@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 from src.android.androidDeviceManager import AndroidDeviceManager
 from PySide6.QtCore import QThread, Signal
 import re
-from src.view.modalCreateAutoView import ModalCreateAutoView
+from src.controller.modalCreateAutoController import ModalCreateAutoController
 
 
 
@@ -71,28 +71,20 @@ class MainController:
         #----------------------------
         self.main_model = MainModel()
         self.main_view = MainView()
-        #-------------------------
         self.theme = SetupTheme()
         self.theme.setupTheme('dark')
         self.theme_select()
-
-        #------------------------
-        self.value_send_phone = None
-        self.data_plan = None
-        self.adb = None
-        self.modal = None
-
-        #-------------------------
         self.setup_connections()
         self.setup_connections_main_window()
         self.main_view.show()
 
+        #------------------------ variaveis de controller -----------------
+        self.value_send_phone = None
+        self.data_plan = None
+        self.adb = None
+        self.modal = None
+        self.modal_create_controller:ModalCreateAutoController = None
 
-    def theme_select(self):
-        self.main_view.combo_box.addItems(self.theme.getTheme())
-
-    def text_selection_phone(self,txt):
-        self.value_send_phone = txt
 
     def setup_connections_main_window(self):
         self.main_view.open_action.triggered.connect(self.open_action_file) 
@@ -113,9 +105,10 @@ class MainController:
             self.setup_connections()
            
         elif item.text(column) == "Modal-de-criacao":
-            self.main_view.setCentralWidget(ModalCreateAutoView(f'C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/outros/window_dump.xml'))
-
-        
+            modal_create_auto = self.modal_create_controller.get_modal_create_auto_widget()
+            self.main_view.setCentralWidget(
+                  modal_create_auto
+                )
 
     def open_action_file(self):
         file_path_xlsx = self.main_view.open_action_file()
@@ -203,9 +196,19 @@ class MainController:
 
         # Salvar a planilha
         wb.save("exemplo.xlsx")
+    
 
     def log(self,msg):
         self.main_view.log_view(msg=msg)
+
+    def set_controller(self,controller):
+        self.modal_create_controller = controller
+
+    def theme_select(self):
+        self.main_view.combo_box.addItems(self.theme.getTheme())
+
+    def text_selection_phone(self,txt):
+        self.value_send_phone = txt
 
 
 

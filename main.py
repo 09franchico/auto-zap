@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
 import sys
 from src.controller.mainController import MainController
 from src.android.adb_server import StartDaemon
+from src.controller.modalCreateAutoController import ModalCreateAutoController
 
 class App:
     
@@ -14,6 +15,9 @@ class App:
         #---------------------
         StartDaemon().start()
         self.main_controller = MainController()
+        self.modal_create_auto_controller = ModalCreateAutoController()
+        
+        self.main_controller.set_controller(self.modal_create_auto_controller)
 
      
 if __name__ == "__main__":

@@ -1,12 +1,10 @@
 from PySide6.QtWidgets import (
     QMainWindow, 
     QDockWidget, 
-    QLabel,
     QWidget,  
     QGridLayout,
     QTreeWidget, 
     QTreeWidgetItem,
-    QLineEdit,
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
@@ -20,7 +18,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,QGuiApplication,QTextCursor
-from src.view.modalCreateAutoView import ModalCreateAutoView
 
 
 class MainView(QMainWindow):

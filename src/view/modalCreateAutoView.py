@@ -15,13 +15,14 @@ from PySide6.QtGui import QPixmap
 
 class ModalCreateAutoView(QWidget):
 
-
     def __init__(self,xml_file):
         super().__init__()
 
-        #Parse o arquivo XML
-        self.tree = ET.parse(xml_file)
-        self.root = self.tree.getroot()
+        try:
+            self.tree = ET.parse(xml_file)
+            self.root = self.tree.getroot()
+        except ET.ParseError:
+            self.root = None 
 
         #grid principal tem que tem o parent (Tela)
         self.layout_grid_principal = QGridLayout(self)
@@ -53,17 +54,12 @@ class ModalCreateAutoView(QWidget):
 
         #----------------------------------------
         self.container_action = QGridLayout()
-
         self.button_print_phone = QPushButton()
         self.button_print_phone.setText('PRINT')
-
         self.button_action_phone = QPushButton()
         self.button_action_phone.setText('EXECUTAR ACAO')
-
         self.container_action.addWidget(self.button_print_phone,0,0)
         self.container_action.addWidget(self.button_action_phone,0,1)
-        
-
         self.layout_grid_principal.addLayout(self.layout_left_phone,1,1)
         self.layout_grid_principal.addLayout(self.layout,1,2)
         self.layout_grid_principal.addLayout(self.container_action,2,2)
@@ -71,12 +67,22 @@ class ModalCreateAutoView(QWidget):
 
 
     def populate_tree(self):
-        for node in self.root.findall('.//node'):
-           
-                button_item = QTreeWidgetItem(self.tree_widget, [node.attrib.get('class', 'Desconhecido'),
-                                                                node.attrib.get('text', 'Sem texto'),
-                                                                node.attrib.get('resource-id', 'Sem ID'),
-                                                                node.attrib.get('bounds', 'Sem bounds')])
+        
+        if self.root is not None:
+            for node in self.root.findall(".//node"):
+                button_item = QTreeWidgetItem(
+                    self.tree_widget,
+                    [
+                        node.attrib.get("class", "Desconhecido"),
+                        node.attrib.get("text", "Sem texto"),
+                        node.attrib.get("resource-id", "Sem ID"),
+                        node.attrib.get("bounds", "Sem bounds"),
+                    ],
+                )
 
-                # Adiciona o item à árvore
                 self.tree_widget.addTopLevelItem(button_item)
+        else:
+            empty_item = QTreeWidgetItem(
+                self.tree_widget, ["Sem elementos", "-", "-", "-"]
+            )
+            self.tree_widget.addTopLevelItem(empty_item)
