@@ -50,7 +50,7 @@ class MainView(QMainWindow):
         dock1.setWidget(dock_widget_content)
         dock1.setAllowedAreas(Qt.AllDockWidgetAreas)
         dock1.setMaximumWidth(270)
-        self.addDockWidget(Qt.RightDockWidgetArea, dock1)
+        self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
 
         #----------------------------
         self.log = QTextEdit()

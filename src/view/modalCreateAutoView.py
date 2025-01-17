@@ -7,7 +7,8 @@ from PySide6.QtWidgets import  (
         QTreeWidgetItem,
         QPushButton,
         QLabel,
-        QGridLayout
+        QGridLayout,
+        QFileDialog,
      )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
@@ -15,14 +16,10 @@ from PySide6.QtGui import QPixmap
 
 class ModalCreateAutoView(QWidget):
 
-    def __init__(self,xml_file):
+    def __init__(self):
         super().__init__()
 
-        try:
-            self.tree = ET.parse(xml_file)
-            self.root = self.tree.getroot()
-        except ET.ParseError:
-            self.root = None 
+        self.root = None 
 
         #grid principal tem que tem o parent (Tela)
         self.layout_grid_principal = QGridLayout(self)
@@ -30,19 +27,19 @@ class ModalCreateAutoView(QWidget):
 
         #---------------------------------------
         self.layout_left_phone = QGridLayout()
-        self.image_label = QLabel()
+        self.image_label = QLabel("[ -------------- Imagem mobile em analise --------------- ]")
         pixmap = QPixmap(f"C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/screenshot.png") 
         
-        desired_width = 300 
-        desired_height = 450 
-        pixmap = pixmap.scaled(
-             desired_width, 
-             desired_height, 
-             Qt.AspectRatioMode.KeepAspectRatio, 
-             Qt.TransformationMode.SmoothTransformation
-             )
+        # desired_width = 300 
+        # desired_height = 450 
+        # pixmap = pixmap.scaled(
+        #      desired_width, 
+        #      desired_height, 
+        #      Qt.AspectRatioMode.KeepAspectRatio, 
+        #      Qt.TransformationMode.SmoothTransformation
+        #      )
         
-        self.image_label.setPixmap(pixmap)
+        # self.image_label.setPixmap(pixmap)
         self.layout_left_phone.addWidget(self.image_label, 0, 0, 2,1)
 
         #---------------------------------------
@@ -64,9 +61,34 @@ class ModalCreateAutoView(QWidget):
         self.layout_grid_principal.addLayout(self.layout,1,2)
         self.layout_grid_principal.addLayout(self.container_action,2,2)
 
+    def set_file_xml(self):
+        try:
 
+            file = self.open_action_file()
+
+            if file is not None:
+                self.tree = ET.parse(file)
+                self.root = self.tree.getroot()
+                self.populate_tree()
+
+
+        except ET.ParseError:
+            self.root = None 
+
+    def open_action_file(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setFileMode(QFileDialog.ExistingFiles)
+        file_dialog.setNameFilter("Arquivos Excel (*.xml)")
+        file_dialog.setViewMode(QFileDialog.List)
+        if file_dialog.exec():
+            file_path = file_dialog.selectedFiles()[0]
+            return file_path
+        return None
+    
 
     def populate_tree(self):
+
+        self.tree_widget.clear()
         
         if self.root is not None:
             for node in self.root.findall(".//node"):
