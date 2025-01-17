@@ -113,8 +113,6 @@ class MainController:
             self.setup_connections()
            
         elif item.text(column) == "Modal-de-criacao":
-
-            # ModalCreateAutoView(f'C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/outros/window_dump.xml')
             self.main_view.setCentralWidget(ModalCreateAutoView(f'C:/Users/franc/OneDrive/Área de Trabalho/DEV/Python/projeto-pyside/outros/window_dump.xml'))
 
         
@@ -141,9 +139,9 @@ class MainController:
             msg = []
             msg.append(text)
             
+            #----------------------------------
             self.adb = AndroidDeviceManager()
             self.adb.connect_device()
-            # self.main_view.combo_box_device.addItem(self.adb.get_device_info())
 
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
