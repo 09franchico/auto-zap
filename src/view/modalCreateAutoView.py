@@ -33,10 +33,10 @@ class ModalCreateAutoView(QWidget):
         #---------------------------------------
         self.layout = QVBoxLayout()
         self.tree_widget = QTreeWidget(self)
-        self.tree_widget.setHeaderLabels(["Elemento", "Texto", "ID", "Posição (Bounds)"])
-        self.tree_widget.setColumnWidth(2,200)
-        self.tree_widget.setColumnWidth(3,200)
-        self.tree_widget.setColumnWidth(4,200)
+        self.tree_widget.setHeaderLabels([ "Texto", "Posição (Bounds)"])
+        self.tree_widget.setColumnWidth(0,300)
+        self.tree_widget.setColumnWidth(1,200)
+        # self.tree_widget.setColumnWidth(4,200)
         self.layout.addWidget(self.tree_widget)
         self.populate_tree()
 
@@ -95,9 +95,9 @@ class ModalCreateAutoView(QWidget):
                 button_item = QTreeWidgetItem(
                     self.tree_widget,
                     [
-                        node.attrib.get("class", "Desconhecido"),
+                        # node.attrib.get("class", "Desconhecido"),
                         node.attrib.get("text", "Sem texto"),
-                        node.attrib.get("resource-id", "Sem ID"),
+                        # node.attrib.get("resource-id", "Sem ID"),
                         node.attrib.get("bounds", "Sem bounds"),
                     ],
                 )
