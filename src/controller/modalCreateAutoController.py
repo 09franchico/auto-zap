@@ -14,6 +14,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view = ModalCreateAutoView()
         self.adb:AndroidDeviceManager = None
         self.bounds = None
+        self.thread_xml = None
 
 
     def setup_connections(self):
@@ -29,7 +30,6 @@ class ModalCreateAutoController:
        self.adb.connect_device()
        return self.modal_create_auto_view
   
-
     def get_value_tree_widget(self, item, column):
         self.bounds = item.text(column)
         match = re.search(r'\[(\d+),(\d+)]\[(\d+),(\d+)]', self.bounds)
@@ -50,30 +50,29 @@ class ModalCreateAutoController:
         except Exception as e:
             print(f"Erro ao desenhar o retângulo na imagem: {e}")
 
-    # def crop_image(self, image_path, x1, y1, x2, y2):
-    #     try:
-    #         image = Image.open(image_path)
-    #         cropped_image = image.crop((x1, y1, x2, y2))
-    #         cropped_image.save("cropped_image.png")
-    #         self.modal_create_auto_view.set_image_screen(image)
-    #     except Exception as e:
-    #         print(f"Erro ao recortar a imagem: {e}")
-
 
     def set_file_xml_thread(self):
-        # self.thread_xml = None
-        # self.thread_xml = XmlGenThread(
-        #         self.adb,
-        #         self.modal_create_auto_view
-        #     )
-        # self.thread_xml.finished.connect(self.handle_thread_finished)
-        # self.thread_xml.start()
 
-        self.adb.dump_screen_xml()
-        self.modal_create_auto_view.set_file_xml()
+        if self.thread_xml and self.thread_xml.isRunning():
+            print("Thread anterior ainda está ativa. Aguardando término.")
+            return
+
+        self.thread_xml = XmlGenThread(
+            self.adb
+        )
+        self.thread_xml.finished.connect(self.handle_thread_finished)
+        self.thread_xml.finished.connect(self.cleanup_thread)
+        self.thread_xml.start()
+
+        # self.adb.dump_screen_xml()
+        # self.modal_create_auto_view.set_file_xml()
+
+    def cleanup_thread(self,msg):
+        self.thread_xml = None
 
     def handle_thread_finished(self,msg):
-        print("-------------------", msg)
+        print(msg)
+        self.modal_create_auto_view.set_file_xml()
 
     def action_phone_execute(self):
         self.adb.execute_click_screen(self.bounds)
@@ -89,18 +88,15 @@ class XmlGenThread(QThread):
 
     def __init__(self,
                  adb,
-                 controller, 
                  parent=None):
         super().__init__(parent)
 
         self.adb:AndroidDeviceManager = adb
-        self.modal_create_view:ModalCreateAutoView = controller
       
     def run(self):
         try:
             self.adb.dump_screen_xml()
-            self.modal_create_view.set_file_xml()
-            self.finished.emit(f"SUCESSO NA GERACAO DE IMAGEM")
+            self.finished.emit(f"DUMP REALIZADO COM SUCESSO")
         
         except Exception as e:
             print(f"Erro ao recortar a imagem: {e}")

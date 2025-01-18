@@ -27,7 +27,7 @@ class ModalCreateAutoView(QWidget):
 
         #---------------------------------------
         self.layout_left_phone = QGridLayout()
-        self.image_label = QLabel("[ -------------- Imagem mobile em analise --------------- ]")
+        self.image_label = QLabel("[  Imagem mobile em analise  ]")
         self.layout_left_phone.addWidget(self.image_label, 0, 0, 2,1)
 
         #---------------------------------------
