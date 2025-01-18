@@ -106,9 +106,8 @@ class MainController:
            
         elif item.text(column) == "Modal-de-criacao":
             modal_create_auto = self.modal_create_controller.get_modal_create_auto_widget()
-            self.main_view.setCentralWidget(
-                  modal_create_auto
-                )
+            self.main_view.setCentralWidget(modal_create_auto)
+            
 
     def open_action_file(self):
         file_path_xlsx = self.main_view.open_action_file()

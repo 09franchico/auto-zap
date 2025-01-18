@@ -34,6 +34,9 @@ class ModalCreateAutoView(QWidget):
         self.layout = QVBoxLayout()
         self.tree_widget = QTreeWidget(self)
         self.tree_widget.setHeaderLabels(["Elemento", "Texto", "ID", "Posição (Bounds)"])
+        self.tree_widget.setColumnWidth(2,200)
+        self.tree_widget.setColumnWidth(3,200)
+        self.tree_widget.setColumnWidth(4,200)
         self.layout.addWidget(self.tree_widget)
         self.populate_tree()
 
@@ -52,8 +55,8 @@ class ModalCreateAutoView(QWidget):
     def set_image_screen(self,img):
 
         pixmap = QPixmap("cropped_image.png") 
-        desired_width = 300 
-        desired_height = 450 
+        desired_width = 400
+        desired_height = 450
         pixmap = pixmap.scaled(
              desired_width, 
              desired_height, 
@@ -68,9 +71,8 @@ class ModalCreateAutoView(QWidget):
             self.tree = ET.parse("window_dump.xml")
             self.root = self.tree.getroot()
             self.populate_tree()
-
-
         except ET.ParseError:
+            print("ERRO no set_file_xml")
             self.root = None 
 
     def open_action_file(self):
@@ -103,6 +105,6 @@ class ModalCreateAutoView(QWidget):
                 self.tree_widget.addTopLevelItem(button_item)
         else:
             empty_item = QTreeWidgetItem(
-                self.tree_widget, ["Sem elementos", "-", "-", "-"]
+                self.tree_widget, ["-", "-", "-", "-"]
             )
             self.tree_widget.addTopLevelItem(empty_item)
