@@ -54,7 +54,7 @@ class ModalCreateAutoView(QWidget):
 
     def set_image_screen(self,img):
 
-        pixmap = QPixmap("cropped_image.png") 
+        pixmap = QPixmap("imagem_roi.png") 
         desired_width = 400
         desired_height = 450
         pixmap = pixmap.scaled(

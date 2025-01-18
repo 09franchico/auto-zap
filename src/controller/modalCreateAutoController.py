@@ -45,7 +45,7 @@ class ModalCreateAutoController:
             rectangle_color = (255, 0, 0)
             rectangle_width = 3 
             draw.rectangle([x1, y1, x2, y2], outline=rectangle_color, width=rectangle_width)
-            image.save("cropped_image.png")
+            image.save("imagem_roi.png")
             self.modal_create_auto_view.set_image_screen(image)
         except Exception as e:
             print(f"Erro ao desenhar o retângulo na imagem: {e}")
