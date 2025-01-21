@@ -49,6 +49,12 @@ class AndroidDeviceManager:
         
         self.device.shell(f'settings put system screen_off_timeout 300000') # 5 minutos ligado
 
+    def back_screen(self):
+        if not self.device:
+            print("Nenhum dispositivo conectado")
+            return
+        self.device.shell("input keyevent KEYCODE_BACK")
+
 
     def habiliar_adbkeyboard(self):
 

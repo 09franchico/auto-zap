@@ -24,6 +24,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_action_phone.clicked.connect(self.action_phone_execute)
         self.modal_create_auto_view.button_add_bound.clicked.connect(self.add_bounds_list)
         self.modal_create_auto_view.button_execute_bound.clicked.connect(self.execute_bounds)
+        self.modal_create_auto_view.button_back_screen.clicked.connect(self.back_screen)
 
 
     def get_modal_create_auto_widget(self):
@@ -49,7 +50,7 @@ class ModalCreateAutoController:
             rectangle_width = 3 
             draw.rectangle([x1, y1, x2, y2], outline=rectangle_color, width=rectangle_width)
             image.save("imagem_roi.png")
-            self.modal_create_auto_view.set_image_screen(image)
+            self.modal_create_auto_view.set_image_screen("imagem_roi.png")
         except Exception as e:
             print(f"Erro ao desenhar o retângulo na imagem: {e}")
 
@@ -75,12 +76,15 @@ class ModalCreateAutoController:
         if self.add_list_auto:
            self.adb.execute_auto_screen(self.add_list_auto)
 
+    def back_screen(self):
+        if self.adb is not None:
+            self.adb.back_screen()
 
     def cleanup_thread(self,msg):
         self.thread_xml = None
 
     def handle_thread_finished(self,msg):
-        print(msg)
+        self.modal_create_auto_view.set_image_screen('screenshot.png')
         self.modal_create_auto_view.set_file_xml()
 
     def action_phone_execute(self):

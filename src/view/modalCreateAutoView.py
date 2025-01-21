@@ -42,22 +42,24 @@ class ModalCreateAutoView(QWidget):
         #----------------------------------------
         self.container_action = QGridLayout()
         self.button_print_phone = QPushButton()
-        self.button_print_phone.setText('PRINT')
+        self.button_print_phone.setText('FOTO')
         self.button_action_phone = QPushButton()
-        self.button_action_phone.setText('CLICK TESTE')
+        self.button_action_phone.setText('ACAO')
         self.button_add_bound = QPushButton("ADICIONAR")
+        self.button_back_screen = QPushButton("VOLTAR")
         self.button_execute_bound = QPushButton("EXECUTA AUTOMACAO")
         self.container_action.addWidget(self.button_print_phone,0,0)
         self.container_action.addWidget(self.button_action_phone,0,1)
         self.container_action.addWidget(self.button_add_bound,0,2)
-        self.container_action.addWidget(self.button_execute_bound,0,3)
+        self.container_action.addWidget(self.button_back_screen,0,3)
+        self.container_action.addWidget(self.button_execute_bound,0,4)
         self.layout_grid_principal.addLayout(self.layout_left_phone,1,1)
         self.layout_grid_principal.addLayout(self.layout,1,2)
         self.layout_grid_principal.addLayout(self.container_action,2,2)
 
     def set_image_screen(self,img):
 
-        pixmap = QPixmap("imagem_roi.png") 
+        pixmap = QPixmap(img) 
         desired_width = 400
         desired_height = 450
         pixmap = pixmap.scaled(

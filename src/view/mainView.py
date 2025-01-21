@@ -58,7 +58,7 @@ class MainView(QMainWindow):
         dock2 = QDockWidget("Logs", self)
         dock2.setWidget(self.log)
         dock2.setAllowedAreas(Qt.AllDockWidgetAreas)
-        dock2.setFixedHeight(150) 
+        dock2.setFixedHeight(130) 
         self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
         stastus_bar = self.statusBar()
         stastus_bar.showMessage("Bot")
