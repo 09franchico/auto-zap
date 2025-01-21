@@ -70,17 +70,10 @@ class ModalCreateAutoController:
     def add_bounds_list(self):
         if self.bounds is not None:
             self.add_list_auto.append(self.bounds)
-            print(self.add_list_auto)
 
-    
     def execute_bounds(self):
-        for bounds in self.add_list_auto:
-            match = re.search(r'\[(\d+),(\d+)]\[(\d+),(\d+)]', bounds)
-            if match:
-                x1, y1, x2, y2 = map(int, match.groups())
-                print(f"x1: {x1}, y1: {y1}, x2: {x2}, y2: {y2}")
-            else:
-                print(f"Formato inválido: {bounds}")
+        if self.add_list_auto:
+           self.adb.execute_auto_screen(self.add_list_auto)
 
 
     def cleanup_thread(self,msg):

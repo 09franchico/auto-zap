@@ -4,6 +4,7 @@ import cv2
 import io
 from PIL import Image
 import numpy as np
+import re
 
 
 class AndroidDeviceManager:
@@ -77,6 +78,16 @@ class AndroidDeviceManager:
         self.device.shell(f'uiautomator dump')
         self.device.pull(f'/sdcard/window_dump.xml',"window_dump.xml")
         self.save_screnshot()
+
+
+    def execute_auto_screen(self,bounds_list:list):
+        for bounds in bounds_list:
+            if not self.device:
+              print("Nenhum dispositivo conectado.")
+            x, y=self.calculate_center(bounds)
+            self.click(x,y)
+            time.sleep(1)
+        self.device.shell('input keyevent KEYCODE_HOME')
 
 
     def mensagem_whats(self,numero, msg):
