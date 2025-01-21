@@ -15,12 +15,15 @@ class ModalCreateAutoController:
         self.adb:AndroidDeviceManager = None
         self.bounds = None
         self.thread_xml = None
+        self.add_list_auto =[]
 
 
     def setup_connections(self):
         self.modal_create_auto_view.tree_widget.itemClicked.connect(self.get_value_tree_widget)
         self.modal_create_auto_view.button_print_phone.clicked.connect(self.set_file_xml_thread)
         self.modal_create_auto_view.button_action_phone.clicked.connect(self.action_phone_execute)
+        self.modal_create_auto_view.button_add_bound.clicked.connect(self.add_bounds_list)
+        self.modal_create_auto_view.button_execute_bound.clicked.connect(self.execute_bounds)
 
 
     def get_modal_create_auto_widget(self):
@@ -64,8 +67,21 @@ class ModalCreateAutoController:
         self.thread_xml.finished.connect(self.cleanup_thread)
         self.thread_xml.start()
 
-        # self.adb.dump_screen_xml()
-        # self.modal_create_auto_view.set_file_xml()
+    def add_bounds_list(self):
+        if self.bounds is not None:
+            self.add_list_auto.append(self.bounds)
+            print(self.add_list_auto)
+
+    
+    def execute_bounds(self):
+        for bounds in self.add_list_auto:
+            match = re.search(r'\[(\d+),(\d+)]\[(\d+),(\d+)]', bounds)
+            if match:
+                x1, y1, x2, y2 = map(int, match.groups())
+                print(f"x1: {x1}, y1: {y1}, x2: {x2}, y2: {y2}")
+            else:
+                print(f"Formato inválido: {bounds}")
+
 
     def cleanup_thread(self,msg):
         self.thread_xml = None

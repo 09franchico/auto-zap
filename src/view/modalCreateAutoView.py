@@ -44,7 +44,7 @@ class ModalCreateAutoView(QWidget):
         self.button_print_phone = QPushButton()
         self.button_print_phone.setText('PRINT')
         self.button_action_phone = QPushButton()
-        self.button_action_phone.setText('EXECUTAR ACAO')
+        self.button_action_phone.setText('CLICK TESTE')
         self.button_add_bound = QPushButton("ADICIONAR")
         self.button_execute_bound = QPushButton("EXECUTA AUTOMACAO")
         self.container_action.addWidget(self.button_print_phone,0,0)
