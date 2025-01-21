@@ -16,10 +16,10 @@ class SetupTheme:
             corner_shape='rounded',
             custom_colors={
                 "[dark]": {
-                    "primary": f"#33DC09",
+                    "primary": f"#117224",
                 },
                 "[light]": {
-                    "primary": f"#33DC09",
+                    "primary": f"#117224",
                 },
             },
             additional_qss=qss
