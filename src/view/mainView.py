@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction,QGuiApplication,QTextCursor
+from PySide6.QtGui import QAction,QGuiApplication,QTextCursor,QIcon
 
 
 class MainView(QMainWindow):
@@ -218,6 +218,16 @@ class MainView(QMainWindow):
 
 
     def populate_tree(self, tree_widget):
+
+        #---------------------------------
+        whatsapp_icon = QIcon('images/whatsapp.png')
+        telegram_icon = QIcon('images/telegram.png')
+        web_icon = QIcon('images/web.png')
+        automacao_icon = QIcon('images/automacao.png')
+        modal_criacao_icon = QIcon('images/modal-criacao.png')
+        node_icon = QIcon('images/node.png')
+        visao_ia_icon = QIcon('images/visao-ia.png')
+
         save_pixmap = QStyle.StandardPixmap.SP_TitleBarMenuButton
         save_icon = self.style().standardIcon(save_pixmap)
 
@@ -226,22 +236,21 @@ class MainView(QMainWindow):
 
         #----------------------------------
         whats_item = QTreeWidgetItem(tree_widget, ["Whatsapp"])
-        whats_item.setIcon(0, save_icon)
+        whats_item.setIcon(0, whatsapp_icon)
 
         child1 = QTreeWidgetItem(whats_item, ["Automacao-elemento"])
-        child1.setIcon(0,title_icon)
-        neto_child1 = QTreeWidgetItem(child1, ["Modal-de-criacao"]).setIcon(0,title_icon)
-        # neto_child1.setIcon(0,title_icon)
+        child1.setIcon(0,automacao_icon)
+        neto_child1 = QTreeWidgetItem(child1, ["Modal-de-criacao"]).setIcon(0,modal_criacao_icon)
 
-        QTreeWidgetItem(child1, ["Node-automatico"]).setIcon(0,title_icon)
+        QTreeWidgetItem(child1, ["Node-automatico"]).setIcon(0,node_icon)
 
-        QTreeWidgetItem(whats_item, ["Automacao-visao"]).setIcon(0,title_icon)
+        QTreeWidgetItem(whats_item, ["Automacao-visao"]).setIcon(0,visao_ia_icon)
         QTreeWidgetItem(whats_item, ["Filho 1.3"]).setIcon(0,title_icon)
         QTreeWidgetItem(whats_item, ["Filho 1.4"]).setIcon(0,title_icon)
 
         #----------------------------------
         telegram_item = QTreeWidgetItem(tree_widget, ["Telegram"])
-        telegram_item.setIcon(0, save_icon)
+        telegram_item.setIcon(0,telegram_icon)
         QTreeWidgetItem(telegram_item, ["Filho 2.1"]).setIcon(0,title_icon)
         QTreeWidgetItem(telegram_item, ["Filho 2.2"]).setIcon(0,title_icon)
         QTreeWidgetItem(telegram_item, ["Filho 2.3"]).setIcon(0,title_icon)
@@ -250,7 +259,7 @@ class MainView(QMainWindow):
 
        #----------------------------------
         web_item = QTreeWidgetItem(tree_widget, ["Web"])
-        web_item.setIcon(0, save_icon)
+        web_item.setIcon(0, web_icon)
         QTreeWidgetItem(web_item, ["Filho 3.1"]).setIcon(0,title_icon)
         QTreeWidgetItem(web_item, ["Filho 3.2"]).setIcon(0,title_icon)
 
