@@ -206,8 +206,8 @@ class AndroidDeviceManager:
             stdout=open('movimentos_touchscreen.txt', 'w'),
             stderr=subprocess.PIPE
         )
-        time.sleep(tempo) 
-        self.stop_capture()
+        # time.sleep(tempo) 
+        # self.stop_capture()
 
     def stop_capture(self):
         if self.process:

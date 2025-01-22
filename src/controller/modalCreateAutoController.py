@@ -17,6 +17,7 @@ class ModalCreateAutoController:
         self.bounds = None
         self.thread_xml = None
         self.thread_auto_click = None
+        self.thread_processar_click = None
         self.add_list_auto =[]
 
 
@@ -28,6 +29,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_execute_bound.clicked.connect(self.execute_bounds)
         self.modal_create_auto_view.button_back_screen.clicked.connect(self.back_screen)
         self.modal_create_auto_view.button_auto_click_screen_phone.clicked.connect(self.auto_click_screen_phone)
+        self.modal_create_auto_view.button_stop_auto_click_screen_phone.clicked.connect(self.stop_auto_click_screen_phone)
 
 
     def get_modal_create_auto_widget(self):
@@ -84,6 +86,10 @@ class ModalCreateAutoController:
         self.thread_auto_click.finished.connect(self.cleanup_thread_auto)
         self.thread_auto_click.start()
 
+    def stop_auto_click_screen_phone(self):
+        if self.adb:
+            self.adb.stop_capture()
+
 
     def add_bounds_list(self):
         if self.bounds is not None:
@@ -113,27 +119,73 @@ class ModalCreateAutoController:
         self.adb.execute_click_screen(self.bounds)
 
     def execute_click_auto(self):
+
+        if self.thread_processar_click and self.thread_processar_click.isRunning():
+            print("Thread anterior ainda está ativa. Aguardando término.")
+            return
+        
         file_path = "movimentos_touchscreen.txt"
         event_regex = re.compile(r"0035 (\w+)|0036 (\w+)")
         x = None  
         y = None 
+        clicks = []
         with open(file_path, "r") as file:
             for line in file:
                 match = event_regex.search(line)
                 if match:
                     if match.group(1): 
                         x = int(match.group(1), 16)
-                        print(f"Eixo X: {x}")
                     elif match.group(2):
                         y = int(match.group(2), 16)
-                        print(f"Eixo Y: {y}")
-                
+
                     if x is not None and y is not None:
-                        print(f"Executando click em: Eixo X: {x}, Eixo Y: {y}")
-                        self.adb.click(x, y)
-                        time.sleep(1) 
+                        print(f"Adicionado ao array: {(x, y)}")
+                        clicks.append((x, y))
                         x = None
                         y = None
+
+        self.processar_clicks(clicks)
+
+    def processar_clicks(self, clicks):
+        self.thread_processar_click = AutoScreenExecuteClickThread(
+            self.adb,
+            clicks=clicks
+        )
+
+        self.thread_processar_click.finished.connect(self.cleanup_thread_processar_click)
+        self.thread_processar_click.start()
+
+    def cleanup_thread_processar_click(self,msg):
+        print(msg)
+        self.thread_processar_click = None
+
+    
+
+class AutoScreenExecuteClickThread(QThread):
+
+    finished = Signal(str)
+
+    def __init__(self,
+                 adb,
+                 clicks,
+                 parent=None):
+        super().__init__(parent)
+
+        self.adb:AndroidDeviceManager = adb
+        self.clicks = clicks
+      
+    def run(self):
+        try:
+            for x, y in self.clicks:
+                print(f"Executando click em: Eixo X: {x}, Eixo Y: {y}")
+                self.adb.click(x, y)
+                time.sleep(1) 
+            
+            self.finished.emit(f"FINALIZADO CLICKS")
+        
+        except Exception as e:
+            print(f"Erro ao executar AutoScreenThread: {e}")
+      
 
 
 
@@ -151,7 +203,7 @@ class AutoScreenThread(QThread):
     def run(self):
         try:
             self.adb.register_toque_screen(20)
-            self.finished.emit(f"COMPLETO AS AÇÔES DE TOQUE")
+            self.finished.emit(f"EM PROCESSO AUTO-SCREEN")
         
         except Exception as e:
             print(f"Erro ao executar AutoScreenThread: {e}")
