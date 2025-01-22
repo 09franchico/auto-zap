@@ -16,6 +16,7 @@ class ModalCreateAutoController:
         self.adb:AndroidDeviceManager = None
         self.bounds = None
         self.thread_xml = None
+        self.thread_auto_click = None
         self.add_list_auto =[]
 
 
@@ -26,6 +27,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_add_bound.clicked.connect(self.add_bounds_list)
         self.modal_create_auto_view.button_execute_bound.clicked.connect(self.execute_bounds)
         self.modal_create_auto_view.button_back_screen.clicked.connect(self.back_screen)
+        self.modal_create_auto_view.button_auto_click_screen_phone.clicked.connect(self.auto_click_screen_phone)
 
 
     def get_modal_create_auto_widget(self):
@@ -69,13 +71,26 @@ class ModalCreateAutoController:
         self.thread_xml.finished.connect(self.cleanup_thread)
         self.thread_xml.start()
 
+    def auto_click_screen_phone(self):
+
+        if self.thread_auto_click and self.thread_auto_click.isRunning():
+            print("Thread anterior ainda está ativa. Aguardando término.")
+            return
+        self.thread_auto_click = AutoScreenThread(
+            self.adb
+        )
+
+        self.thread_auto_click.finished.connect(self.handle_thread_auto_finish)
+        self.thread_auto_click.finished.connect(self.cleanup_thread_auto)
+        self.thread_auto_click.start()
+
+
     def add_bounds_list(self):
         if self.bounds is not None:
             self.add_list_auto.append(self.bounds)
 
     def execute_bounds(self):
-        if self.add_list_auto:
-           self.adb.execute_auto_screen(self.add_list_auto)
+        self.execute_click_auto()
 
     def back_screen(self):
         if self.adb is not None:
@@ -84,6 +99,12 @@ class ModalCreateAutoController:
     def cleanup_thread(self,msg):
         self.thread_xml = None
 
+    def cleanup_thread_auto(self,msg):
+        self.thread_auto_click = None
+
+    def handle_thread_auto_finish(self,msg):
+        print(msg)
+
     def handle_thread_finished(self,msg):
         self.modal_create_auto_view.set_image_screen('screenshot.png')
         self.modal_create_auto_view.set_file_xml()
@@ -91,7 +112,7 @@ class ModalCreateAutoController:
     def action_phone_execute(self):
         self.adb.execute_click_screen(self.bounds)
 
-    def teste(self):
+    def execute_click_auto(self):
         file_path = "movimentos_touchscreen.txt"
         event_regex = re.compile(r"0035 (\w+)|0036 (\w+)")
         x = None  
@@ -116,6 +137,24 @@ class ModalCreateAutoController:
 
 
 
+class AutoScreenThread(QThread):
+
+    finished = Signal(str)
+
+    def __init__(self,
+                 adb,
+                 parent=None):
+        super().__init__(parent)
+
+        self.adb:AndroidDeviceManager = adb
+      
+    def run(self):
+        try:
+            self.adb.register_toque_screen(20)
+            self.finished.emit(f"COMPLETO AS AÇÔES DE TOQUE")
+        
+        except Exception as e:
+            print(f"Erro ao executar AutoScreenThread: {e}")
 
 
 
