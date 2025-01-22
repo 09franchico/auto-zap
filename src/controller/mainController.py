@@ -86,6 +86,10 @@ class MainController:
         self.modal_create_controller:ModalCreateAutoController = None
 
 
+        #---------------------------
+        self.config_device_maneger()
+        
+
     def setup_connections_main_window(self):
         self.main_view.open_action.triggered.connect(self.open_action_file) 
         self.main_view.combo_box.currentTextChanged.connect(self.theme.setupTheme)
@@ -103,6 +107,7 @@ class MainController:
         if item.text(column) == "Whatsapp":
             self.main_view.central_widget_main()
             self.setup_connections()
+            self.config_device_maneger()
            
         elif item.text(column) == "Modal-de-criacao":
             modal_create_auto = self.modal_create_controller.get_modal_create_auto_widget()
@@ -117,7 +122,7 @@ class MainController:
             self.main_view.add_value_combo_box_envio_phone(self.data_plan.get('header_label'))
             self.main_view.show_table_widget_view(data=self.data_plan)
 
-        
+
     def start_process(self):
         telefones = self.main_view.get_column_data(self.value_send_phone)
 
@@ -132,9 +137,7 @@ class MainController:
             msg.append(text)
             
             #----------------------------------
-            self.adb = AndroidDeviceManager()
-            self.adb.connect_device()
-
+        
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
             self.adb_thread.error.connect(self.on_adb_error)
@@ -152,13 +155,10 @@ class MainController:
     def on_adb_error(self, error_message):
        self.log(f"{error_message}")
      
-
-
     def stop_process(self):
         if self.adb is not None:
            self.adb_thread.stop_script()
 
-        
     def get_planilha(self,path):
         try:
             workbook = load_workbook(path)
@@ -208,6 +208,16 @@ class MainController:
 
     def text_selection_phone(self,txt):
         self.value_send_phone = txt
+
+    def config_device_maneger(self):
+        self.adb = AndroidDeviceManager()
+        self.adb.connect_device()
+        phone  = self.adb.get_device_serial()
+        if phone is None:
+            self.main_view.combo_box_device.addItem("Nenhum dispositivo conectado")
+            return
+    
+        self.main_view.combo_box_device.addItem(phone)
 
 
 

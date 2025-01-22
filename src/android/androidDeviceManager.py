@@ -34,6 +34,16 @@ class AndroidDeviceManager:
         version = self.device.shell("getprop ro.build.version.release")
         print(f"Versão do Android: {version}")
         return version
+    
+    def get_device_serial(self):
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        
+        print(f"Dispositivo conectado: {self.device.serial}")
+
+        return self.device.serial
+
 
     def open_camera(self):
          if not self.device:
