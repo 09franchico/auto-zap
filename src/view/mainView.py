@@ -14,7 +14,9 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QProgressBar,
     QSpinBox,
-    QVBoxLayout
+    QVBoxLayout,
+    QToolButton,
+    QMessageBox
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction,QGuiApplication,QTextCursor,QIcon
@@ -73,6 +75,9 @@ class MainView(QMainWindow):
         #----------------------------
         # Widgets
         self.combo_box_device = QComboBox()
+        self.tool_button_device = QToolButton(self)
+        self.tool_button_device.setIcon(QIcon("images/conectar_device.png"))
+        self.tool_button_device.setToolTip("Conectar a device")
         self.message_text = QTextEdit()
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0) 
@@ -93,12 +98,13 @@ class MainView(QMainWindow):
 
         #----------------------------
         self.right_layout = QGridLayout()
-        self.right_layout.addWidget(self.progress_bar,1,1,1,2)
+        self.right_layout.addWidget(self.progress_bar,1,1,1,3)
         self.right_layout.addWidget(self.combo_box_colun_envio_phone,2,1)
         self.right_layout.addWidget(self.combo_box_device,2,2)
+        self.right_layout.addWidget(self.tool_button_device,2,3)
         self.right_layout.addWidget(self.start_process,3,1)
-        self.right_layout.addWidget(self.stop_process,3,2)
-        self.right_layout.addWidget(self.spin_box,4,2)
+        self.right_layout.addWidget(self.stop_process,3,2,1,2)
+        self.right_layout.addWidget(self.spin_box,4,2,1,2)
         self.layout_grid.addLayout(self.right_layout, 3, 2, 5, 1)
 
         
@@ -266,10 +272,11 @@ class MainView(QMainWindow):
         whats_item.setExpanded(True)
 
 
-    
-
     def log_view(self,msg):
         self.log.append(msg)
         self.log.moveCursor(QTextCursor.End)
+
+    def message_info(self,msg):
+        QMessageBox.information(self,"Informação",msg)
 
 

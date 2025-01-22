@@ -4,6 +4,7 @@ from src.android.androidDeviceManager import AndroidDeviceManager
 from PIL import Image, ImageDraw
 import re
 from PySide6.QtCore import QThread, Signal
+import time
 
 
 
@@ -89,6 +90,29 @@ class ModalCreateAutoController:
 
     def action_phone_execute(self):
         self.adb.execute_click_screen(self.bounds)
+
+    def teste(self):
+        file_path = "movimentos_touchscreen.txt"
+        event_regex = re.compile(r"0035 (\w+)|0036 (\w+)")
+        x = None  
+        y = None 
+        with open(file_path, "r") as file:
+            for line in file:
+                match = event_regex.search(line)
+                if match:
+                    if match.group(1): 
+                        x = int(match.group(1), 16)
+                        print(f"Eixo X: {x}")
+                    elif match.group(2):
+                        y = int(match.group(2), 16)
+                        print(f"Eixo Y: {y}")
+                
+                    if x is not None and y is not None:
+                        print(f"Executando click em: Eixo X: {x}, Eixo Y: {y}")
+                        self.adb.click(x, y)
+                        time.sleep(1) 
+                        x = None
+                        y = None
 
 
 

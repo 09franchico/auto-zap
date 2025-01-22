@@ -99,6 +99,7 @@ class MainController:
         self.main_view.start_process.clicked.connect(self.start_process)
         self.main_view.stop_process.clicked.connect(self.stop_process)
         self.main_view.combo_box_colun_envio_phone.currentTextChanged.connect(self.text_selection_phone)
+        self.main_view.tool_button_device.clicked.connect(self.conectar_device)
 
 
 
@@ -125,26 +126,26 @@ class MainController:
 
     def start_process(self):
         telefones = self.main_view.get_column_data(self.value_send_phone)
-
         if telefones:
             text = self.main_view.message_text.toPlainText()
             
             if text.strip() == '':
-                self.log("MENSAGEM não encontrada!")
+                self.main_view.message_info("MESAGEM NÃO ENCONTRADA !")
                 return
             
             msg = []
             msg.append(text)
             
             #----------------------------------
-        
             self.adb_thread = AdbThread(self.adb, telefones, msg)
             self.adb_thread.finished.connect(self.on_adb_finished)
             self.adb_thread.error.connect(self.on_adb_error)
             self.adb_thread.progress.connect(self.progress_send_message)
             self.adb_thread.start()
         else:
-            self.log("NUMERO não encontrado!")
+            self.main_view.message_info("NUMERO NÃO ENCONTRADO !")
+
+
 
     def progress_send_message(self,value:int):
         self.main_view.progress_bar.setValue(value)
@@ -209,10 +210,16 @@ class MainController:
     def text_selection_phone(self,txt):
         self.value_send_phone = txt
 
+    def conectar_device(self):
+        self.config_device_maneger()
+        
+
     def config_device_maneger(self):
         self.adb = AndroidDeviceManager()
         self.adb.connect_device()
         phone  = self.adb.get_device_serial()
+
+        self.main_view.combo_box_device.clear()
         if phone is None:
             self.main_view.combo_box_device.addItem("Nenhum dispositivo conectado")
             return

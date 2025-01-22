@@ -5,6 +5,7 @@ import io
 from PIL import Image
 import numpy as np
 import re
+import subprocess
 
 
 class AndroidDeviceManager:
@@ -12,6 +13,7 @@ class AndroidDeviceManager:
         """Inicializa o cliente ADB."""
         self.client = AdbClient(host=host, port=port)
         self.device = None
+        self.process = None
 
     def connect_device(self):
         """Conecta ao dispositivo usando ADB."""
@@ -40,8 +42,6 @@ class AndroidDeviceManager:
             print("Nenhum dispositivo conectado.")
             return None
         
-        print(f"Dispositivo conectado: {self.device.serial}")
-
         return self.device.serial
 
 
@@ -186,14 +186,34 @@ class AndroidDeviceManager:
             bounds = bounds.strip("[]").split("][")
             if len(bounds) != 2:
                 raise ValueError("Bounds string format is incorrect. Expected format: '[x1,y1][x2,y2]'")
-            
-            # Separar e converter as coordenadas
+ 
             x1, y1 = map(int, bounds[0].split(","))
             x2, y2 = map(int, bounds[1].split(","))
-            
-            # Calcular o centro
             center_x = (x1 + x2) // 2
             center_y = (y1 + y2) // 2
             return center_x, center_y
         except Exception as e:
             raise ValueError(f"Error calculating center: {e}")
+        
+        
+    def register_toque_screen(self,tempo):
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        
+        self.process = subprocess.Popen(
+            ['platform-tools_r34.0.5-windows/adb', 'shell', 'getevent', '/dev/input/event5'], 
+            stdout=open('movimentos_touchscreen.txt', 'w'),
+            stderr=subprocess.PIPE
+        )
+        time.sleep(tempo) 
+        self.stop_capture()
+
+    def stop_capture(self):
+        if self.process:
+            self.process.terminate()  # Isso encerra o processo de captura
+            self.process.wait()  # Espera o processo terminar
+            print("Captura de eventos parada.")
+        
+
+    
