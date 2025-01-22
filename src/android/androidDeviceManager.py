@@ -196,7 +196,7 @@ class AndroidDeviceManager:
             raise ValueError(f"Error calculating center: {e}")
         
         
-    def register_toque_screen(self,tempo):
+    def register_toque_screen(self):
         if not self.device:
             print("Nenhum dispositivo conectado.")
             return None
@@ -204,10 +204,9 @@ class AndroidDeviceManager:
         self.process = subprocess.Popen(
             ['platform-tools_r34.0.5-windows/adb', 'shell', 'getevent', '/dev/input/event5'], 
             stdout=open('movimentos_touchscreen.txt', 'w'),
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            creationflags=subprocess.CREATE_NO_WINDOW
         )
-        # time.sleep(tempo) 
-        # self.stop_capture()
 
     def stop_capture(self):
         if self.process:

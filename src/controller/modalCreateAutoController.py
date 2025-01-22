@@ -70,7 +70,6 @@ class ModalCreateAutoController:
             self.adb
         )
         self.thread_xml.finished.connect(self.handle_thread_finished)
-        self.thread_xml.finished.connect(self.cleanup_thread)
         self.thread_xml.start()
 
     def auto_click_screen_phone(self):
@@ -82,41 +81,9 @@ class ModalCreateAutoController:
             self.adb
         )
 
-        self.thread_auto_click.finished.connect(self.handle_thread_auto_finish)
         self.thread_auto_click.finished.connect(self.cleanup_thread_auto)
         self.thread_auto_click.start()
 
-    def stop_auto_click_screen_phone(self):
-        if self.adb:
-            self.adb.stop_capture()
-
-
-    def add_bounds_list(self):
-        if self.bounds is not None:
-            self.add_list_auto.append(self.bounds)
-
-    def execute_bounds(self):
-        self.execute_click_auto()
-
-    def back_screen(self):
-        if self.adb is not None:
-            self.adb.back_screen()
-
-    def cleanup_thread(self,msg):
-        self.thread_xml = None
-
-    def cleanup_thread_auto(self,msg):
-        self.thread_auto_click = None
-
-    def handle_thread_auto_finish(self,msg):
-        print(msg)
-
-    def handle_thread_finished(self,msg):
-        self.modal_create_auto_view.set_image_screen('screenshot.png')
-        self.modal_create_auto_view.set_file_xml()
-
-    def action_phone_execute(self):
-        self.adb.execute_click_screen(self.bounds)
 
     def execute_click_auto(self):
 
@@ -151,9 +118,42 @@ class ModalCreateAutoController:
             self.adb,
             clicks=clicks
         )
-
         self.thread_processar_click.finished.connect(self.cleanup_thread_processar_click)
         self.thread_processar_click.start()
+
+
+    def stop_auto_click_screen_phone(self):
+        if self.adb:
+            self.adb.stop_capture()
+
+    def add_bounds_list(self):
+        if self.bounds is not None:
+            self.add_list_auto.append(self.bounds)
+
+    def execute_bounds(self):
+        self.execute_click_auto()
+
+    def back_screen(self):
+        if self.adb is not None:
+            self.adb.back_screen()
+
+    def cleanup_thread(self,msg):
+        self.thread_xml = None
+
+    def cleanup_thread_auto(self,msg):
+        print(msg)
+        self.thread_auto_click = None
+
+    def handle_thread_auto_finish(self,msg):
+        print(msg)
+
+    def handle_thread_finished(self,msg):
+        self.modal_create_auto_view.set_image_screen('screenshot.png')
+        self.modal_create_auto_view.set_file_xml()
+        self.thread_xml = None
+
+    def action_phone_execute(self):
+        self.adb.execute_click_screen(self.bounds)
 
     def cleanup_thread_processar_click(self,msg):
         print(msg)
@@ -202,7 +202,7 @@ class AutoScreenThread(QThread):
       
     def run(self):
         try:
-            self.adb.register_toque_screen(20)
+            self.adb.register_toque_screen()
             self.finished.emit(f"EM PROCESSO AUTO-SCREEN")
         
         except Exception as e:
