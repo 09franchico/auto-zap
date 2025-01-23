@@ -59,8 +59,8 @@ class ModalCreateAutoView(QWidget):
         self.button_action_phone.setText('ACAO')
         self.button_add_bound = QPushButton("ADICIONAR")
         self.button_back_screen = QPushButton("VOLTAR")
-        self.button_auto_click_screen_phone = QPushButton("AUTO-TELA")
-        self.button_stop_auto_click_screen_phone = QPushButton("STOP-AUTO-TELA")
+        self.button_auto_click_screen_phone = QPushButton("GRAVAR TELA")
+        self.button_stop_auto_click_screen_phone = QPushButton("PARAR GRAVAR TELA")
         self.button_execute_bound = QPushButton("EXECUTA AUTOMACAO")
 
         self.container_action_manual.addWidget(self.button_print_phone,0,0)

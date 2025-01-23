@@ -43,6 +43,19 @@ class AndroidDeviceManager:
             return None
         
         return self.device.serial
+    
+    def clear_app_open(self,range_number):
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        
+        self.device.shell("input keyevent KEYCODE_APP_SWITCH")
+        for _ in range(range_number): 
+            self.device.shell("input swipe 500 1000 500 100")
+            time.sleep(1)
+        
+        self.device.shell("input keyevent KEYCODE_HOME")
+        time.sleep(1)
 
 
     def open_camera(self):

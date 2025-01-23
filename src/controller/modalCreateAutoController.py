@@ -145,11 +145,7 @@ class ModalCreateAutoController:
         self.thread_xml = None
 
     def cleanup_thread_auto(self,msg):
-        print(msg)
         self.thread_auto_click = None
-
-    def handle_thread_auto_finish(self,msg):
-        print(msg)
 
     def handle_thread_finished(self,msg):
         self.modal_create_auto_view.set_image_screen('screenshot.png')
@@ -157,10 +153,10 @@ class ModalCreateAutoController:
         self.thread_xml = None
 
     def action_phone_execute(self):
-        self.adb.execute_click_screen(self.bounds)
+        if self.bounds is not None:
+           self.adb.execute_click_screen(self.bounds)
 
     def cleanup_thread_processar_click(self,msg):
-        print(msg)
         self.modal_create_auto_view.add_text_image_label("[ AUTOMACAO DE CLICKS FINALIZADO ]")
         self.thread_processar_click = None
 
@@ -181,6 +177,7 @@ class AutoScreenExecuteClickThread(QThread):
       
     def run(self):
         try:
+            self.adb.clear_app_open(1)
             for x, y in self.clicks:
                 print(f"Executando click em: Eixo X: {x}, Eixo Y: {y}")
                 self.adb.click(x, y)
