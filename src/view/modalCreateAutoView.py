@@ -9,6 +9,7 @@ from PySide6.QtWidgets import  (
         QLabel,
         QGridLayout,
         QFileDialog,
+        QGroupBox
      )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
@@ -27,8 +28,9 @@ class ModalCreateAutoView(QWidget):
 
         #---------------------------------------
         self.layout_left_phone = QGridLayout()
-        self.image_label = QLabel("[  Imagem mobile em analise  ]")
-        self.layout_left_phone.addWidget(self.image_label, 0, 0, 2,1)
+        self.image_label = QLabel("[  IMAGEM MOBILE EM ANALISE  ]")
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.layout_left_phone.addWidget(self.image_label, 0, 0, 0,0)
 
         #---------------------------------------
         self.layout = QVBoxLayout()
@@ -40,7 +42,13 @@ class ModalCreateAutoView(QWidget):
         self.populate_tree()
 
         #----------------------------------------
-        self.container_action = QGridLayout()
+        self.group_box_manual = QGroupBox("Manual")
+        self.container_action_manual = QGridLayout()
+        self.group_box_auto = QGroupBox("Automatico")
+        self.container_action_auto = QGridLayout()
+
+
+        #----------------------------------------
         self.button_print_phone = QPushButton()
         self.button_print_phone.setText('FOTO')
         self.button_action_phone = QPushButton()
@@ -50,21 +58,34 @@ class ModalCreateAutoView(QWidget):
         self.button_auto_click_screen_phone = QPushButton("AUTO-TELA")
         self.button_stop_auto_click_screen_phone = QPushButton("STOP-AUTO-TELA")
         self.button_execute_bound = QPushButton("EXECUTA AUTOMACAO")
-        self.container_action.addWidget(self.button_print_phone,0,0)
-        self.container_action.addWidget(self.button_action_phone,0,1)
-        self.container_action.addWidget(self.button_add_bound,0,2)
-        self.container_action.addWidget(self.button_back_screen,0,3)
-        self.container_action.addWidget(self.button_auto_click_screen_phone,0,4)
-        self.container_action.addWidget(self.button_stop_auto_click_screen_phone,0,5)
-        self.container_action.addWidget(self.button_execute_bound,0,6)
-        self.layout_grid_principal.addLayout(self.layout_left_phone,1,1)
-        self.layout_grid_principal.addLayout(self.layout,1,2)
-        self.layout_grid_principal.addLayout(self.container_action,2,2)
+
+        self.container_action_manual.addWidget(self.button_print_phone,0,0)
+        self.container_action_manual.addWidget(self.button_action_phone,0,1)
+        self.container_action_manual.addWidget(self.button_add_bound,0,2)
+        self.container_action_manual.addWidget(self.button_back_screen,2,0)
+
+        self.container_action_auto.addWidget(self.button_auto_click_screen_phone,0,0)
+        self.container_action_auto.addWidget(self.button_stop_auto_click_screen_phone,0,1)
+        self.container_action_auto.addWidget(self.button_execute_bound,1,1)
+
+
+
+
+        #------------------------
+        self.group_box_manual.setLayout(self.container_action_manual)
+        self.group_box_auto.setLayout(self.container_action_auto)
+
+        #------------------------------------------
+        self.layout_grid_principal.addLayout(self.layout_left_phone, 1, 1,2,1)
+        self.layout_grid_principal.addLayout(self.layout, 1, 2, 1, 2)
+        self.layout_grid_principal.addWidget(self.group_box_manual, 2, 2, 1, 1)
+        self.layout_grid_principal.addWidget(self.group_box_auto, 2, 3, 1, 1)
+      
 
     def set_image_screen(self,img):
 
         pixmap = QPixmap(img) 
-        desired_width = 400
+        desired_width = 300
         desired_height = 450
         pixmap = pixmap.scaled(
              desired_width, 
@@ -117,3 +138,6 @@ class ModalCreateAutoView(QWidget):
                 self.tree_widget, ["-", "-", "-", "-"]
             )
             self.tree_widget.addTopLevelItem(empty_item)
+
+    def add_text_image_label(self,msg):
+        self.image_label.setText(msg)

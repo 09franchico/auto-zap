@@ -210,8 +210,8 @@ class AndroidDeviceManager:
 
     def stop_capture(self):
         if self.process:
-            self.process.terminate()  # Isso encerra o processo de captura
-            self.process.wait()  # Espera o processo terminar
+            self.process.terminate()
+            self.process.wait()
             print("Captura de eventos parada.")
         
 

@@ -77,10 +77,11 @@ class ModalCreateAutoController:
         if self.thread_auto_click and self.thread_auto_click.isRunning():
             print("Thread anterior ainda está ativa. Aguardando término.")
             return
+        
+        self.modal_create_auto_view.add_text_image_label("[ REALIZANDO A AUTOMACAO DOS CLICKS - ON ]")
         self.thread_auto_click = AutoScreenThread(
             self.adb
         )
-
         self.thread_auto_click.finished.connect(self.cleanup_thread_auto)
         self.thread_auto_click.start()
 
@@ -120,11 +121,13 @@ class ModalCreateAutoController:
         )
         self.thread_processar_click.finished.connect(self.cleanup_thread_processar_click)
         self.thread_processar_click.start()
+        self.modal_create_auto_view.add_text_image_label("[ PROCESSANDO CLICKS ]")
 
 
     def stop_auto_click_screen_phone(self):
         if self.adb:
             self.adb.stop_capture()
+            self.modal_create_auto_view.add_text_image_label("[ AUTOMACAO PARADA COM SUCESSO - OFF ]")
 
     def add_bounds_list(self):
         if self.bounds is not None:
@@ -157,6 +160,7 @@ class ModalCreateAutoController:
 
     def cleanup_thread_processar_click(self,msg):
         print(msg)
+        self.modal_create_auto_view.add_text_image_label("[ AUTOMACAO DE CLICKS FINALIZADO ]")
         self.thread_processar_click = None
 
     
