@@ -9,7 +9,9 @@ from PySide6.QtWidgets import  (
         QLabel,
         QGridLayout,
         QFileDialog,
-        QGroupBox
+        QGroupBox,
+        QTableWidget,
+        QTableWidgetItem
      )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
@@ -34,12 +36,14 @@ class ModalCreateAutoView(QWidget):
 
         #---------------------------------------
         self.layout = QVBoxLayout()
-        self.tree_widget = QTreeWidget(self)
-        self.tree_widget.setHeaderLabels([ "Texto", "Posição (Bounds)"])
-        self.tree_widget.setColumnWidth(0,300)
-        self.tree_widget.setColumnWidth(1,200)
-        self.layout.addWidget(self.tree_widget)
-        self.populate_tree()
+        self.table_widget = QTableWidget(self)
+        self.table_widget.setColumnCount(2)
+        self.table_widget.setHorizontalHeaderLabels(["Texto", "Posição (Bounds)"])
+        self.table_widget.setColumnWidth(0, 300)
+        self.table_widget.setColumnWidth(1, 290)
+        self.layout.addWidget(self.table_widget)
+
+        self.populate_table()
 
         #----------------------------------------
         self.group_box_manual = QGroupBox("Manual")
@@ -100,7 +104,7 @@ class ModalCreateAutoView(QWidget):
         try:
             self.tree = ET.parse("window_dump.xml")
             self.root = self.tree.getroot()
-            self.populate_tree()
+            self.populate_table()
         except ET.ParseError:
             print("ERRO no set_file_xml")
             self.root = None 
@@ -115,29 +119,20 @@ class ModalCreateAutoView(QWidget):
             return file_path
         return None
     
+    def populate_table(self):
+        self.table_widget.clearContents()
+        self.table_widget.setRowCount(0)
 
-    def populate_tree(self):
-
-        self.tree_widget.clear()
-        
         if self.root is not None:
             for node in self.root.findall(".//node"):
-                button_item = QTreeWidgetItem(
-                    self.tree_widget,
-                    [
-                        # node.attrib.get("class", "Desconhecido"),
-                        node.attrib.get("text", "Sem texto"),
-                        # node.attrib.get("resource-id", "Sem ID"),
-                        node.attrib.get("bounds", "Sem bounds"),
-                    ],
-                )
-
-                self.tree_widget.addTopLevelItem(button_item)
+                row_position = self.table_widget.rowCount()
+                self.table_widget.insertRow(row_position)
+                self.table_widget.setItem(row_position, 0, QTableWidgetItem(node.attrib.get("text", "Sem texto")))
+                self.table_widget.setItem(row_position, 1, QTableWidgetItem(node.attrib.get("bounds", "Sem bounds")))
         else:
-            empty_item = QTreeWidgetItem(
-                self.tree_widget, ["-", "-", "-", "-"]
-            )
-            self.tree_widget.addTopLevelItem(empty_item)
+            self.table_widget.setRowCount(1)
+            self.table_widget.setItem(0, 0, QTableWidgetItem("-"))
+            self.table_widget.setItem(0, 1, QTableWidgetItem("-"))
 
     def add_text_image_label(self,msg):
         self.image_label.setText(msg)

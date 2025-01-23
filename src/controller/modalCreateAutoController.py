@@ -22,7 +22,7 @@ class ModalCreateAutoController:
 
 
     def setup_connections(self):
-        self.modal_create_auto_view.tree_widget.itemClicked.connect(self.get_value_tree_widget)
+        self.modal_create_auto_view.table_widget.cellClicked.connect(self.on_cell_clicked)
         self.modal_create_auto_view.button_print_phone.clicked.connect(self.set_file_xml_thread)
         self.modal_create_auto_view.button_action_phone.clicked.connect(self.action_phone_execute)
         self.modal_create_auto_view.button_add_bound.clicked.connect(self.add_bounds_list)
@@ -39,8 +39,9 @@ class ModalCreateAutoController:
        self.adb.connect_device()
        return self.modal_create_auto_view
   
-    def get_value_tree_widget(self, item, column):
-        self.bounds = item.text(column)
+    def on_cell_clicked(self, row, column):
+
+        self.bounds = self.modal_create_auto_view.table_widget.item(row, column).text()
         match = re.search(r'\[(\d+),(\d+)]\[(\d+),(\d+)]', self.bounds)
         if match:
             x1, y1, x2, y2 = map(int, match.groups())
