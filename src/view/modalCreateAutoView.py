@@ -37,10 +37,11 @@ class ModalCreateAutoView(QWidget):
         #---------------------------------------
         self.layout = QVBoxLayout()
         self.table_widget = QTableWidget(self)
-        self.table_widget.setColumnCount(2)
-        self.table_widget.setHorizontalHeaderLabels(["Texto", "Posição (Bounds)"])
+        self.table_widget.setColumnCount(3)
+        self.table_widget.setHorizontalHeaderLabels(["Texto", "Posição (Bounds)","Coordenada (Gerado automatico)"])
         self.table_widget.setColumnWidth(0, 300)
         self.table_widget.setColumnWidth(1, 290)
+        self.table_widget.setColumnWidth(2, 250)
         self.layout.addWidget(self.table_widget)
 
         self.populate_table()
@@ -56,7 +57,7 @@ class ModalCreateAutoView(QWidget):
         self.button_print_phone = QPushButton()
         self.button_print_phone.setText('FOTO')
         self.button_action_phone = QPushButton()
-        self.button_action_phone.setText('ACAO')
+        self.button_action_phone.setText('CLICAR')
         self.button_add_bound = QPushButton("ADICIONAR")
         self.button_back_screen = QPushButton("VOLTAR")
         self.button_auto_click_screen_phone = QPushButton("GRAVAR TELA")
@@ -133,6 +134,7 @@ class ModalCreateAutoView(QWidget):
             self.table_widget.setRowCount(1)
             self.table_widget.setItem(0, 0, QTableWidgetItem("-"))
             self.table_widget.setItem(0, 1, QTableWidgetItem("-"))
+            self.table_widget.setItem(0, 2, QTableWidgetItem("-"))
 
     def add_text_image_label(self,msg):
         self.image_label.setText(msg)

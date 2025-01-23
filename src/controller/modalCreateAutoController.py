@@ -40,8 +40,13 @@ class ModalCreateAutoController:
        return self.modal_create_auto_view
   
     def on_cell_clicked(self, row, column):
-
-        self.bounds = self.modal_create_auto_view.table_widget.item(row, column).text()
+        if row is None or column is None:
+            return
+        
+        item = self.modal_create_auto_view.table_widget.item(row, column)
+        if item is None:
+            return
+        self.bounds = item.text()
         match = re.search(r'\[(\d+),(\d+)]\[(\d+),(\d+)]', self.bounds)
         if match:
             x1, y1, x2, y2 = map(int, match.groups())
