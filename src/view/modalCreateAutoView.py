@@ -3,18 +3,19 @@ import xml.etree.ElementTree as ET
 from PySide6.QtWidgets import  (
         QWidget, 
         QVBoxLayout,
-        QTreeWidget, 
-        QTreeWidgetItem,
         QPushButton,
         QLabel,
         QGridLayout,
         QFileDialog,
         QGroupBox,
         QTableWidget,
-        QTableWidgetItem
+        QTableWidgetItem,
+        QMessageBox,
+        QStyle,
      )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt,QSize
 from PySide6.QtGui import QPixmap
+import json
 
 
 class ModalCreateAutoView(QWidget):
@@ -48,8 +49,10 @@ class ModalCreateAutoView(QWidget):
 
         #----------------------------------------
         self.group_box_manual = QGroupBox("Manual")
+        self.group_box_manual.setProperty("customProperty", "highlighted")  # Definir uma propriedade personalizada
         self.container_action_manual = QGridLayout()
         self.group_box_auto = QGroupBox("Automatico")
+        self.group_box_auto.setProperty("customProperty", "highlighted")
         self.container_action_auto = QGridLayout()
 
 
@@ -60,9 +63,20 @@ class ModalCreateAutoView(QWidget):
         self.button_action_phone.setText('CLICAR')
         self.button_add_bound = QPushButton("ADICIONAR")
         self.button_back_screen = QPushButton("VOLTAR")
-        self.button_auto_click_screen_phone = QPushButton("GRAVAR TELA")
-        self.button_stop_auto_click_screen_phone = QPushButton("PARAR GRAVAR TELA")
-        self.button_execute_bound = QPushButton("EXECUTA AUTOMACAO")
+
+        #-----------------------------------------
+        save_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveAllButton)
+        stop_auto_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop)
+        gravar_auto_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
+
+
+        self.button_auto_click_screen_phone = QPushButton("GRAVAR")
+        self.button_auto_click_screen_phone.setIcon(gravar_auto_icon)
+        self.button_stop_auto_click_screen_phone = QPushButton("PARAR")
+        self.button_stop_auto_click_screen_phone.setIcon(stop_auto_icon)
+        self.button_salvar_auto = QPushButton("SALVAR")
+        self.button_salvar_auto.setIcon(save_icon)
+        self.button_execute_bound = QPushButton("EXECUTAR")
 
         self.container_action_manual.addWidget(self.button_print_phone,0,0)
         self.container_action_manual.addWidget(self.button_action_phone,0,1)
@@ -71,7 +85,8 @@ class ModalCreateAutoView(QWidget):
 
         self.container_action_auto.addWidget(self.button_auto_click_screen_phone,0,0)
         self.container_action_auto.addWidget(self.button_stop_auto_click_screen_phone,0,1)
-        self.container_action_auto.addWidget(self.button_execute_bound,1,1)
+        self.container_action_auto.addWidget(self.button_salvar_auto,0,2)
+        self.container_action_auto.addWidget(self.button_execute_bound,1,2)
 
 
 
@@ -119,6 +134,17 @@ class ModalCreateAutoView(QWidget):
             file_path = file_dialog.selectedFiles()[0]
             return file_path
         return None
+    
+    def save_json_click_xy(self,auto_clicks):
+        file_path, _ = QFileDialog.getSaveFileName(self, "Salvar JSON", "", "JSON Files (*.json)")
+        if file_path:
+            dados_para_salvar = {"clicks_xy": auto_clicks}
+            try:
+                with open(file_path, "w") as json_file:
+                    json.dump(dados_para_salvar, json_file, indent=4)
+                QMessageBox.information(self, "Sucesso", "Arquivo salvo com sucesso!")
+            except Exception as e:
+                QMessageBox.critical(self, "Erro", f"Erro ao salvar o arquivo: {str(e)}")
     
     def populate_table(self):
         self.table_widget.clearContents()

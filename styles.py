@@ -3,9 +3,15 @@ import qdarktheme
 #pyinstaller --onefile --noconsole main.py 
 
 qss = """
-QPushButton {
-    
-}
+    QGroupBox[customProperty='highlighted'] {
+            font-size: 14px;
+            font-weight: normal;
+            border-radius: 6px;
+            padding: 10px;
+        }
+    QPushButton {
+        
+    }
 """
 
 class SetupTheme:

@@ -19,6 +19,7 @@ class ModalCreateAutoController:
         self.thread_auto_click = None
         self.thread_processar_click = None
         self.add_list_auto =[]
+        self.auto_clicks = []
 
 
     def setup_connections(self):
@@ -30,6 +31,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_back_screen.clicked.connect(self.back_screen)
         self.modal_create_auto_view.button_auto_click_screen_phone.clicked.connect(self.auto_click_screen_phone)
         self.modal_create_auto_view.button_stop_auto_click_screen_phone.clicked.connect(self.stop_auto_click_screen_phone)
+        self.modal_create_auto_view.button_salvar_auto.clicked.connect(self.salvar_automatico)
 
 
     def get_modal_create_auto_widget(self):
@@ -92,12 +94,8 @@ class ModalCreateAutoController:
         self.thread_auto_click.start()
 
 
-    def execute_click_auto(self):
+    def coordenation_screen_text(self):
 
-        if self.thread_processar_click and self.thread_processar_click.isRunning():
-            print("Thread anterior ainda está ativa. Aguardando término.")
-            return
-        
         file_path = "movimentos_touchscreen.txt"
         event_regex = re.compile(r"0035 (\w+)|0036 (\w+)")
         x = None  
@@ -118,16 +116,30 @@ class ModalCreateAutoController:
                         x = None
                         y = None
 
-        self.processar_clicks(clicks)
+        return clicks
 
-    def processar_clicks(self, clicks):
+
+
+    def execute_click_auto(self):
+
+        if self.thread_processar_click and self.thread_processar_click.isRunning():
+            print("Thread anterior ainda está ativa. Aguardando término.")
+            return
+        self.auto_clicks = self.coordenation_screen_text()   
+
+        #-----------------------------
         self.thread_processar_click = AutoScreenExecuteClickThread(
-            self.adb,
-            clicks=clicks
+            adb=self.adb,
+            clicks=self.auto_clicks
         )
         self.thread_processar_click.finished.connect(self.cleanup_thread_processar_click)
         self.thread_processar_click.start()
         self.modal_create_auto_view.add_text_image_label("[ PROCESSANDO CLICKS ]")
+
+
+    def salvar_automatico(self):
+        if self.auto_clicks:
+           self.modal_create_auto_view.save_json_click_xy(self.auto_clicks)
 
 
     def stop_auto_click_screen_phone(self):
