@@ -76,6 +76,7 @@ class ModalCreateAutoView(QWidget):
         self.button_stop_auto_click_screen_phone.setIcon(stop_auto_icon)
         self.button_salvar_auto = QPushButton("SALVAR")
         self.button_salvar_auto.setIcon(save_icon)
+        self.button_load_file_auto = QPushButton("CARREGAR")
         self.button_execute_bound = QPushButton("EXECUTAR")
 
         self.container_action_manual.addWidget(self.button_print_phone,0,0)
@@ -86,6 +87,7 @@ class ModalCreateAutoView(QWidget):
         self.container_action_auto.addWidget(self.button_auto_click_screen_phone,0,0)
         self.container_action_auto.addWidget(self.button_stop_auto_click_screen_phone,0,1)
         self.container_action_auto.addWidget(self.button_salvar_auto,0,2)
+        self.container_action_auto.addWidget(self.button_load_file_auto,1,1)
         self.container_action_auto.addWidget(self.button_execute_bound,1,2)
 
 
@@ -129,6 +131,16 @@ class ModalCreateAutoView(QWidget):
         file_dialog = QFileDialog(self)
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
         file_dialog.setNameFilter("Arquivos Excel (*.xml)")
+        file_dialog.setViewMode(QFileDialog.List)
+        if file_dialog.exec():
+            file_path = file_dialog.selectedFiles()[0]
+            return file_path
+        return None
+    
+    def open_auto_file(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setFileMode(QFileDialog.ExistingFiles)
+        file_dialog.setNameFilter("Arquivos Excel (*.json)")
         file_dialog.setViewMode(QFileDialog.List)
         if file_dialog.exec():
             file_path = file_dialog.selectedFiles()[0]

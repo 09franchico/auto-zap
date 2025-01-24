@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw
 import re
 from PySide6.QtCore import QThread, Signal
 import time
+import json
 
 
 
@@ -32,6 +33,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_auto_click_screen_phone.clicked.connect(self.auto_click_screen_phone)
         self.modal_create_auto_view.button_stop_auto_click_screen_phone.clicked.connect(self.stop_auto_click_screen_phone)
         self.modal_create_auto_view.button_salvar_auto.clicked.connect(self.salvar_automatico)
+        self.modal_create_auto_view.button_load_file_auto.clicked.connect(self.load_file_auto)
 
 
     def get_modal_create_auto_widget(self):
@@ -116,8 +118,19 @@ class ModalCreateAutoController:
                         x = None
                         y = None
 
-        return clicks
+        self.clear_file()
 
+        return clicks
+    
+
+    def clear_file(self):
+        file_path = "movimentos_touchscreen.txt"
+        try:
+            with open(file_path, "w") as file:
+                file.truncate(0)
+            print(f"Arquivo {file_path} limpo com sucesso.")
+        except Exception as e:
+            print(f"Erro ao limpar o arquivo: {e}")
 
 
     def execute_click_auto(self):
@@ -125,8 +138,7 @@ class ModalCreateAutoController:
         if self.thread_processar_click and self.thread_processar_click.isRunning():
             print("Thread anterior ainda está ativa. Aguardando término.")
             return
-        self.auto_clicks = self.coordenation_screen_text()   
-
+        
         #-----------------------------
         self.thread_processar_click = AutoScreenExecuteClickThread(
             adb=self.adb,
@@ -141,11 +153,31 @@ class ModalCreateAutoController:
         if self.auto_clicks:
            self.modal_create_auto_view.save_json_click_xy(self.auto_clicks)
 
+    def load_file_auto(self):
+        file_path = self.modal_create_auto_view.open_auto_file()
+        if file_path: 
+            try:
+                
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    data:dict = json.load(file)
+                    self.auto_clicks = data.get('clicks_xy')
+                    print(data.get('clicks_xy'))
+
+            except json.JSONDecodeError as e:
+                print(f"Erro ao decodificar o arquivo JSON: {e}")
+            except Exception as e:
+                print(f"Ocorreu um erro ao carregar o arquivo JSON: {e}")
+        else:
+            print("Nenhum arquivo foi selecionado.")
+
+
 
     def stop_auto_click_screen_phone(self):
         if self.adb:
             self.adb.stop_capture()
+            self.auto_clicks = self.coordenation_screen_text()
             self.modal_create_auto_view.add_text_image_label("[ AUTOMACAO PARADA COM SUCESSO - OFF ]")
+            
 
     def add_bounds_list(self):
         if self.bounds is not None:
