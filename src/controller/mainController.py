@@ -10,61 +10,6 @@ from src.controller.modalCreateAutoController import ModalCreateAutoController
 
 
 
-class AdbThread(QThread):
-
-    finished = Signal(str)
-    error = Signal(str)
-    progress = Signal(int)
-
-
-    def __init__(self, adb_manager:AndroidDeviceManager, phones_number:list, message:list, parent=None):
-        super().__init__(parent)
-        self.adb_manager = adb_manager
-        self.phones_number:list = phones_number
-        self.messages:list = message
-        self.stop = False
-
-    def run(self):
-        try:
-            #--------------------------------
-            self.stop = False
-            self.adb_manager.screen_time_on_5min()
-            self.adb_manager.habiliar_adbkeyboard()
-
-            for index, phone in enumerate(self.phones_number, start=1):
-
-                progress_int = int((index / len(self.phones_number)) * 100)
-                self.progress.emit(progress_int)
-
-                if self.stop:
-                    self.error.emit(f"STOP realizado com sucesso!")
-                    break
-
-                if self.is_valid_phone_number(phone):
-
-                    for msg in self.messages:
-                        status, mensagem = self.adb_manager.mensagem_whats(phone, msg)
-                        if status:
-                            self.finished.emit(f"[{phone}] : MENSAGEM ENVIADA COM SUCESSO 😊")
-                        else:
-                            self.error.emit(mensagem)
-                            break
-                else:
-                    self.finished.emit(f"Telefone [VAZIO ou INVALIDO].Por favor, verificar!")
-                
-        except Exception as e:
-            self.error.emit(str(e))
-
-    def stop_script(self):
-        self.stop = True
-
-    def is_valid_phone_number(self,phone: str) -> bool:
-        pattern = r'^(\(\d{2}\)\d{5}-\d{4}|\d{11}|\d{7}-\d{4})$'
-        return bool(re.match(pattern, phone))
-
-
-
-
 class MainController:
     
     def __init__(self):
@@ -186,18 +131,7 @@ class MainController:
             return None
         
 
-    def create_planilha(self):
-        wb = Workbook()
-        ws = wb.active
-        ws.title = "Minha Planilha"
-
-        ws.append(["NOME", "EMAIL", "TELEFONE","MENSAGEM"])
-        ws.append([f"Francisco santos", "fra@gmail.com", "92993160919","OLA AQUI È UM TESTE DE MENSAGEM QUE SERÀ ENVIADO"])
-
-        # Salvar a planilha
-        wb.save("exemplo.xlsx")
     
-
     def log(self,msg):
         self.main_view.log_view(msg=msg)
 
@@ -225,6 +159,64 @@ class MainController:
             return
     
         self.main_view.combo_box_device.addItem(phone)
+
+
+
+
+"""
+   Thread para executar ação do envio de msg
+"""
+class AdbThread(QThread):
+
+    finished = Signal(str)
+    error = Signal(str)
+    progress = Signal(int)
+
+
+    def __init__(self, adb_manager:AndroidDeviceManager, phones_number:list, message:list, parent=None):
+        super().__init__(parent)
+        self.adb_manager = adb_manager
+        self.phones_number:list = phones_number
+        self.messages:list = message
+        self.stop = False
+
+    def run(self):
+        try:
+            #--------------------------------
+            self.stop = False
+            self.adb_manager.screen_time_on_5min()
+            self.adb_manager.habiliar_adbkeyboard()
+
+            for index, phone in enumerate(self.phones_number, start=1):
+
+                progress_int = int((index / len(self.phones_number)) * 100)
+                self.progress.emit(progress_int)
+
+                if self.stop:
+                    self.error.emit(f"STOP realizado com sucesso!")
+                    break
+
+                if self.is_valid_phone_number(phone):
+
+                    for msg in self.messages:
+                        status, mensagem = self.adb_manager.mensagem_whats(phone, msg)
+                        if status:
+                            self.finished.emit(f"[{phone}] : MENSAGEM ENVIADA COM SUCESSO 😊")
+                        else:
+                            self.error.emit(mensagem)
+                            break
+                else:
+                    self.finished.emit(f"Telefone [VAZIO ou INVALIDO].Por favor, verificar!")
+                
+        except Exception as e:
+            self.error.emit(str(e))
+
+    def stop_script(self):
+        self.stop = True
+
+    def is_valid_phone_number(self,phone: str) -> bool:
+        pattern = r'^(\(\d{2}\)\d{5}-\d{4}|\d{11}|\d{7}-\d{4})$'
+        return bool(re.match(pattern, phone))
 
 
 

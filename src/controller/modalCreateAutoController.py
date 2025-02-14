@@ -21,8 +21,7 @@ class ModalCreateAutoController:
         self.thread_auto_click = None
         self.thread_processar_click = None
         self.add_list_auto =[]
-        self.auto_clicks = []
-
+        self.add_list_manual = []
 
     def setup_connections(self):
         self.modal_create_auto_view.table_widget.cellClicked.connect(self.on_cell_clicked)
@@ -35,6 +34,7 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_stop_auto_click_screen_phone.clicked.connect(self.stop_auto_click_screen_phone)
         self.modal_create_auto_view.button_salvar_auto.clicked.connect(self.salvar_automatico)
         self.modal_create_auto_view.button_load_file_auto.clicked.connect(self.load_file_auto)
+        self.modal_create_auto_view.button_clear_add.clicked.connect(self.clear_add_bound_list)
 
 
     def get_modal_create_auto_widget(self):
@@ -144,7 +144,7 @@ class ModalCreateAutoController:
         #-----------------------------
         self.thread_processar_click = AutoScreenExecuteClickThread(
             adb=self.adb,
-            clicks=self.auto_clicks
+            clicks=self.add_list_auto
         )
         self.thread_processar_click.finished.connect(self.cleanup_thread_processar_click)
         self.thread_processar_click.start()
@@ -152,8 +152,8 @@ class ModalCreateAutoController:
 
 
     def salvar_automatico(self):
-        if self.auto_clicks:
-           self.modal_create_auto_view.save_json_click_xy(self.auto_clicks)
+        if self.add_list_auto:
+           self.modal_create_auto_view.save_json_click_xy(self.add_list_auto)
 
     def load_file_auto(self):
         file_path = self.modal_create_auto_view.open_auto_file()
@@ -162,7 +162,7 @@ class ModalCreateAutoController:
                 
                 with open(file_path, 'r', encoding='utf-8') as file:
                     data:dict = json.load(file)
-                    self.auto_clicks = data.get('clicks_xy')
+                    self.add_list_auto = data.get('clicks_xy')
                     print(data.get('clicks_xy'))
 
             except json.JSONDecodeError as e:
@@ -176,18 +176,20 @@ class ModalCreateAutoController:
 
     def stop_auto_click_screen_phone(self):
         if self.adb:
+            self.add_list_auto = self.coordenation_screen_text()
             self.adb.stop_capture()
-            self.auto_clicks = self.coordenation_screen_text()
             self.modal_create_auto_view.add_text_image_label("[ AUTOMACAO PARADA COM SUCESSO - OFF ]")
             
+    def clear_add_bound_list(self):
+        self.add_list_manual = []
 
     def add_bounds_list(self):
         if self.bounds is not None:
             tool_utils = Utils()
             x , y = tool_utils.calculate_center_click(self.bounds)
-            self.add_list_auto.append([x , y])
+            self.add_list_manual.append([x , y])
 
-        dados_para_salvar = {"clicks_xy": self.add_list_auto}
+        dados_para_salvar = {"clicks_xy": self.add_list_manual}
 
         print(dados_para_salvar)
 
@@ -239,7 +241,7 @@ class AutoScreenExecuteClickThread(QThread):
             for x, y in self.clicks:
                 print(f"Executando click em: Eixo X: {x}, Eixo Y: {y}")
                 self.adb.click(x, y)
-                time.sleep(1) 
+                time.sleep(5) 
             
             self.finished.emit(f"FINALIZADO CLICKS")
         
