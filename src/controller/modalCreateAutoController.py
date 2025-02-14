@@ -6,6 +6,7 @@ import re
 from PySide6.QtCore import QThread, Signal
 import time
 import json
+from src.utils.utils import Utils
 
 
 
@@ -41,6 +42,7 @@ class ModalCreateAutoController:
        self.setup_connections()
        self.adb = AndroidDeviceManager()
        self.adb.connect_device()
+       self.add_list_auto = []
        return self.modal_create_auto_view
   
     def on_cell_clicked(self, row, column):
@@ -181,7 +183,14 @@ class ModalCreateAutoController:
 
     def add_bounds_list(self):
         if self.bounds is not None:
-            self.add_list_auto.append(self.bounds)
+            tool_utils = Utils()
+            x , y = tool_utils.calculate_center_click(self.bounds)
+            self.add_list_auto.append([x , y])
+
+        dados_para_salvar = {"clicks_xy": self.add_list_auto}
+
+        print(dados_para_salvar)
+
 
     def execute_bounds(self):
         self.execute_click_auto()

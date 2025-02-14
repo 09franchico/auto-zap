@@ -129,42 +129,42 @@ class AndroidDeviceManager:
         self.device.shell("ping 127.0.0.1 -n 3 > nul")
         time.sleep(2)
 
-        x, y=self.calculate_center('[69,1465][504,1483]')
+        x, y = self.calculate_center('[69,1465][504,1483]')
         self.click(x,y)
         time.sleep(1)
 
         self.device.shell(f'am broadcast -a ADB_INPUT_TEXT --es msg "{msg}"')
 
-        time.sleep(1)
+        # time.sleep(1)
 
-        #envia o arquivo
-        x, y =self.calculate_center('[639,1450][708,1483]')
-        self.click(x,y)
-        time.sleep(1)
+        # #envia o arquivo
+        # x, y =self.calculate_center('[639,1450][708,1483]')
+        # self.click(x,y)
+        # time.sleep(1)
 
-        #clica no file
-        x, y=self.calculate_center('[504,1455][573,1483]')
-        self.click(x,y)
+        # #clica no file
+        # x, y=self.calculate_center('[504,1455][573,1483]')
+        # self.click(x,y)
 
-        time.sleep(1)
+        # time.sleep(1)
 
-        #clica em documentos
-        x, y=self.calculate_center('[139,1160][217,1238]')
-        self.click(x,y)
+        # #clica em documentos
+        # x, y=self.calculate_center('[139,1160][217,1238]')
+        # self.click(x,y)
 
-        time.sleep(1)
+        # time.sleep(1)
 
-        #seleciona o arquivo
-        x, y=self.calculate_center('[104,403][335,436]')
-        self.click(x,y)
+        # #seleciona o arquivo
+        # x, y=self.calculate_center('[104,403][335,436]')
+        # self.click(x,y)
 
-        time.sleep(1)
+        # time.sleep(1)
 
-        #envia o arquivo
-        x, y=self.calculate_center('[639,1450][708,1483]')
-        self.click(x,y)
+        # #envia o arquivo
+        # x, y=self.calculate_center('[639,1450][708,1483]')
+        # self.click(x,y)
 
-        time.sleep(1)
+        # time.sleep(1)
 
         return True, "scrip executado com sucesso"
 

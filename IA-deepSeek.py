@@ -6,7 +6,7 @@ response = client.chat.completions.create(
     model="deepseek-chat",
     messages=[
         {"role": "system", "content": "You are a helpful assistant"},
-        {"role": "user", "content": "Me der um exmeplo de codigo em python ?"},
+        {"role": "user", "content": "Me der um exmeplo de codigo em python usando pyside6 ?"},
     ],
     stream=False
 )
