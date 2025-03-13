@@ -35,7 +35,12 @@ class ModalCreateAutoController:
         self.modal_create_auto_view.button_salvar_auto.clicked.connect(self.salvar_automatico)
         self.modal_create_auto_view.button_load_file_auto.clicked.connect(self.load_file_auto)
         self.modal_create_auto_view.button_clear_add.clicked.connect(self.clear_add_bound_list)
+        self.modal_create_auto_view.button_save_manual.clicked.connect(self.save_manual)
 
+
+    def save_manual(self):
+        print("OLA MUNDO")
+        #self.adb.gerar_log()
 
     def get_modal_create_auto_widget(self):
        self.modal_create_auto_view = ModalCreateAutoView()

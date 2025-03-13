@@ -26,6 +26,44 @@ class AndroidDeviceManager:
         self.device = devices[0]
         print(f"Dispositivo conectado: {self.device.serial}")
         return self.device
+    
+
+    def gerar_log(self):
+
+        if not self.device:
+            print("Nenhum dispositivo conectado.")
+            return None
+        
+        self.device.shell("logcat", handler=self.__dump_logcat)
+
+    def __dump_logcat_by_line(self,connect):
+        file_obj = connect.socket.makefile()
+        for index in range(0, 20):
+            print("Line {}: {}".format(index, file_obj.readline().strip()))
+
+    def __dump_logcat(self, connection):
+        """Captura os logs e filtra os eventos relevantes de toque e entrada."""
+        try:
+            while True:
+                data = connection.read(1024)
+                if not data:
+                    break
+                log_line = data.decode('utf-8', errors='ignore')
+
+                # Filtra apenas eventos de toque contendo coordenadas
+                if 'touch' in log_line.lower() or 'input' in log_line.lower() or 'motionevent' in log_line.lower():
+                    print(log_line)
+
+                    # Expressão regular para encontrar coordenadas X e Y
+                    match = re.search(r'X=([\d.]+).*Y=([\d.]+)', log_line)
+                    if match:
+                        x, y = match.groups()
+                        print(f"Toque detectado em: X={x}, Y={y}")
+                        
+        except Exception as e:
+            print(f"Erro ao capturar logs: {e}")
+        finally:
+            connection.close()
 
     def get_device_info(self):
         """Obtém informações do dispositivo."""

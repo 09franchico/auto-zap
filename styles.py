@@ -1,6 +1,6 @@
 import qdarktheme
 
-#pyinstaller --onefile --noconsole main.py 
+#pyinstaller --onedir --noconsole main.py 
 
 qss = """
     QGroupBox[customProperty='highlighted'] {
